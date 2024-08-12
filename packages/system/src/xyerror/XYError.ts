@@ -33,7 +33,7 @@ export const XYErrorMessages = {
     { id, sourceHandle, targetHandle }: { id: string; sourceHandle: string | null; targetHandle: string | null }
   ) =>
     `Couldn't create edge for ${handleType} handle id: "${
-      !sourceHandle ? sourceHandle : targetHandle
+      handleType === 'source' ? sourceHandle : targetHandle
     }", edge id: ${id}.`,
   [XYErrorCode.MARKER_TYPE_NOT_FOUND]: (type: string) => `Marker type "${type}" doesn't exist.`,
   [XYErrorCode.HANDLE_NODE_ID_NOT_FOUND]: () =>
