@@ -2,6 +2,7 @@ export * from './constants';
 export * from './types';
 export * from './utils';
 export * from './xydrag';
+export * from './xyerror';
 export * from './xyhandle';
 export * from './xyminimap';
 export * from './xypanzoom';
