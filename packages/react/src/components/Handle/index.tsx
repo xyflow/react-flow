@@ -1,24 +1,25 @@
 import {
+  type ForwardedRef,
   type HTMLAttributes,
+  memo,
   type MouseEvent as ReactMouseEvent,
   type TouchEvent as ReactTouchEvent,
-  type ForwardedRef,
-  memo,
 } from 'react';
 import cc from 'classcat';
 import { shallow } from 'zustand/shallow';
 import {
-  errorMessages,
-  Position,
-  XYHandle,
-  getHostForElement,
-  isMouseEvent,
   addEdge,
-  type HandleProps as HandlePropsSystem,
   type Connection,
-  type HandleType,
   ConnectionMode,
+  getHostForElement,
+  type HandleProps as HandlePropsSystem,
+  type HandleType,
+  isMouseEvent,
   OnConnect,
+  Position,
+  XYError,
+  XYErrorCode,
+  XYHandle,
   ConnectionState,
   Optional,
 } from '@xyflow/system';
@@ -89,7 +90,8 @@ function HandleComponent(
   );
 
   if (!nodeId) {
-    store.getState().onError?.('010', errorMessages['error010']());
+    const error = new XYError(XYErrorCode.HANDLE_NODE_ID_NOT_FOUND);
+    store.getState().onError?.(error.code, error.message, error);
   }
 
   const onConnectExtended = (params: Connection) => {
