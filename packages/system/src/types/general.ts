@@ -11,6 +11,7 @@ import type { InternalNodeBase, NodeBase, NodeDragItem } from './nodes';
 import type { Handle, HandleType } from './handles';
 import { PanZoomInstance } from './panzoom';
 import { EdgeBase } from '..';
+import { XYError } from '../xyerror';
 
 export type Project = (position: XYPosition) => XYPosition;
 
@@ -127,7 +128,8 @@ export type SelectionRect = Rect & {
   startY: number;
 };
 
-export type OnError = (id: string, message: string) => void;
+// todo: remove first two arguments and only pass the error to the callback
+export type OnError = (id: string, message: string, error: XYError) => void;
 
 export type UpdateNodePositions = (dragItems: Map<string, NodeDragItem | InternalNodeBase>, dragging?: boolean) => void;
 export type PanBy = (delta: XYPosition) => Promise<boolean>;
