@@ -1,17 +1,17 @@
 <svelte:options immutable />
 
 <script lang="ts">
-  import {createEventDispatcher, onDestroy, setContext} from 'svelte';
-  import {get, writable} from 'svelte/store';
+  import { setContext, onDestroy, createEventDispatcher } from 'svelte';
+  import { get, writable } from 'svelte/store';
   import cc from 'classcat';
-  import {Position, XYError, XYErrorCode} from '@xyflow/system';
+  import { Position,  XYError, XYErrorCode } from '@xyflow/system';
 
   import drag from '$lib/actions/drag';
-  import {useStore} from '$lib/store';
+  import { useStore } from '$lib/store';
   import DefaultNode from '$lib/components/nodes/DefaultNode.svelte';
-  import type {NodeWrapperProps} from './types';
-  import {getNodeInlineStyleDimensions} from './utils';
-  import type {NodeEventMap} from '$lib/types';
+  import type { NodeWrapperProps } from './types';
+  import { getNodeInlineStyleDimensions } from './utils';
+  import type { NodeEventMap } from '$lib/types';
 
   interface $$Props extends NodeWrapperProps {}
 

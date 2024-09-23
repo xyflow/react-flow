@@ -1,25 +1,25 @@
 import {
-  type ForwardedRef,
   type HTMLAttributes,
-  memo,
   type MouseEvent as ReactMouseEvent,
   type TouchEvent as ReactTouchEvent,
+  type ForwardedRef,
+  memo,
 } from 'react';
 import cc from 'classcat';
 import { shallow } from 'zustand/shallow';
 import {
-  addEdge,
-  type Connection,
-  ConnectionMode,
-  getHostForElement,
-  type HandleProps as HandlePropsSystem,
-  type HandleType,
-  isMouseEvent,
-  OnConnect,
-  Position,
   XYError,
   XYErrorCode,
+  Position,
   XYHandle,
+  getHostForElement,
+  isMouseEvent,
+  addEdge,
+  type HandleProps as HandlePropsSystem,
+  type Connection,
+  type HandleType,
+  ConnectionMode,
+  OnConnect,
   ConnectionState,
   Optional,
 } from '@xyflow/system';
