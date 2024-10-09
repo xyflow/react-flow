@@ -74,7 +74,7 @@ export function NodeToolbar({
   const isActive =
     typeof isVisible === 'boolean'
       ? isVisible
-      : nodes.size === 1 && nodes.values().next().value.selected && selectedNodesCount === 1;
+      : nodes.size === 1 && nodes.values().next().value?.selected && selectedNodesCount === 1;
 
   if (!isActive || !nodes.size) {
     return null;

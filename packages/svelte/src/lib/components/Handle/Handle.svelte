@@ -115,6 +115,7 @@
 
   $: if (onconnect || ondisconnect) {
     // connectionLookup is not reactive, so we use edges to get notified about updates
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     $edges;
     connections = $connectionLookup.get(`${nodeId}-${type}-${id || null}`);
   }

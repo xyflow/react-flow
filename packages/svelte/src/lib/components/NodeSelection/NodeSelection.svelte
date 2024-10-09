@@ -21,6 +21,7 @@
 
   $: if ($selectionRectMode === 'nodes') {
     bounds = getInternalNodesBounds($nodeLookup, { filter: (node) => !!node.selected });
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     $nodes;
   }
 

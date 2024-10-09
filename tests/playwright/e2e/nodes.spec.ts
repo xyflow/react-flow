@@ -135,7 +135,7 @@ test.describe('Nodes', () => {
       const node = page.locator(`.${FRAMEWORK}-flow__node`).and(page.locator('[data-id="Node-1"]'));
 
       await node.click();
-      await page.keyboard.press('Backspace');
+      await page.keyboard.press('d');
 
       await expect(node).not.toBeAttached();
 
@@ -143,14 +143,15 @@ test.describe('Nodes', () => {
       expect(edges).toHaveLength(0);
     });
 
-    // TODO: pressing backspace creates problems on webkit
+    // deleting needs to be done with other than backspace because of webkit
     test('deletable=false prevents deletion', async ({ page }) => {
       const node = page.locator(`.${FRAMEWORK}-flow__node`).and(page.locator('[data-id="notDeletable"]'));
 
       await expect(node).toBeAttached();
 
       await node.click();
-      await page.keyboard.press('Backspace');
+      await expect(node).toBeAttached();
+      await page.keyboard.press('d');
 
       await expect(node).toBeAttached();
     });
@@ -186,7 +187,7 @@ test.describe('Nodes', () => {
 
       await firstOutputHandle.hover();
       await page.mouse.down();
-      await secondOutputHandle.hover();
+      await secondOutputHandle.hover({ force: true });
       await page.mouse.up();
 
       const edgesAfter = await page.locator(`.${FRAMEWORK}-flow__edge`).all();
@@ -207,7 +208,7 @@ test.describe('Nodes', () => {
 
       await firstInputHandle.hover();
       await page.mouse.down();
-      await secondInputHandle.hover();
+      await secondInputHandle.hover({ force: true });
       await page.mouse.up();
 
       const edgesAfter = await page.locator(`.${FRAMEWORK}-flow__edge`).all();

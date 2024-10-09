@@ -42,7 +42,7 @@ const adoptUserNodesDefaultOptions = {
   checkEquality: true,
 };
 
-function mergeObjects<T extends Record<string, any>>(base: T, incoming?: Partial<T>): T {
+function mergeObjects<T extends Record<string, unknown>>(base: T, incoming?: Partial<T>): T {
   const result = { ...base };
   for (const key in incoming) {
     if (incoming[key] !== undefined) {

@@ -11,15 +11,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^3.0.2",
-    "@astrojs/svelte": "^4.0.2",
-    "@types/react": "^18.2.24",
-    "@types/react-dom": "^18.2.8",
+    "@astrojs/react": "^3.6.2",
+    "@astrojs/svelte": "^5.7.2",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
     "@xyflow/react": "workspace:^",
     "@xyflow/svelte": "workspace:^",
-    "astro": "^3.2.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "svelte": "^4.2.1"
+    "astro": "^4.15.12",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "svelte": "^4.2.19"
   }
 }

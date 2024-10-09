@@ -5,9 +5,9 @@
   "license": "MIT",
   "main": "src/index.js",
   "devDependencies": {
-    "eslint": "^8.22.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-config-turbo": "^2.0.3",
-    "eslint-plugin-react": "^7.33.2"
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-config-turbo": "^2.1.2",
+    "eslint-plugin-react": "^7.36.1"
   }
 }

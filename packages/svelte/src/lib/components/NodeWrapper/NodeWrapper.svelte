@@ -13,7 +13,7 @@
   import { getNodeInlineStyleDimensions } from './utils';
   import type { NodeEventMap } from '$lib/types';
 
-  interface $$Props extends NodeWrapperProps {}
+  type $$Props = NodeWrapperProps;
 
   export let node: $$Props['node'];
   export let id: $$Props['id'];
@@ -124,7 +124,9 @@
 
   $: {
     if (resizeObserver && (nodeRef !== prevNodeRef || !initialized)) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       prevNodeRef && resizeObserver.unobserve(prevNodeRef);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       nodeRef && resizeObserver.observe(nodeRef);
       prevNodeRef = nodeRef;
     }

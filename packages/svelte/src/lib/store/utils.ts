@@ -127,6 +127,9 @@ export type NodeStoreOptions = {
   elevateNodesOnSelect?: boolean;
 };
 
+type ValueOf<T> = T[keyof T];
+type Update<T> = ValueOf<Pick<Writable<T>, 'update'>>;
+
 // we are creating a custom store for the internals nodes in order to update the zIndex and positionAbsolute.
 // The user only passes in relative positions, so we need to calculate the absolute positions based on the parent nodes.
 export const createNodesStore = (
@@ -142,7 +145,7 @@ export const createNodesStore = (
   setDefaultOptions: (opts: DefaultNodeOptions) => void;
   setOptions: (opts: NodeStoreOptions) => void;
 } => {
-  const { subscribe, set, update } = writable<Node[]>([]);
+  const { subscribe, set } = writable<Node[]>([]);
   let value = nodes;
   let defaults = {};
   let elevateNodesOnSelect = true;
@@ -163,7 +166,7 @@ export const createNodesStore = (
     return value;
   };
 
-  const _update: typeof update = (fn: (nds: Node[]) => Node[]) => _set(fn(value));
+  const _update: Update<Node[]> = (fn: (nds: Node[]) => Node[]) => _set(fn(value));
 
   const setDefaultOptions = (options: DefaultNodeOptions) => {
     defaults = options;
@@ -190,7 +193,7 @@ export const createEdgesStore = (
   edgeLookup: EdgeLookup<Edge>,
   defaultOptions?: DefaultEdgeOptions
 ): Writable<Edge[]> & { setDefaultOptions: (opts: DefaultEdgeOptions) => void } => {
-  const { subscribe, set, update } = writable<Edge[]>([]);
+  const { subscribe, set } = writable<Edge[]>([]);
   let value = edges;
   let defaults = defaultOptions || {};
 
@@ -203,7 +206,7 @@ export const createEdgesStore = (
     set(value);
   };
 
-  const _update: typeof update = (fn: (eds: Edge[]) => Edge[]) => _set(fn(value));
+  const _update: Update<Edge[]> = (fn: (eds: Edge[]) => Edge[]) => _set(fn(value));
 
   const setDefaultOptions = (options: DefaultEdgeOptions) => {
     defaults = options;

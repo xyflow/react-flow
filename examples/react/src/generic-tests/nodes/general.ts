@@ -7,6 +7,7 @@ export default {
       DragHandleNode,
     },
     nodeDragThreshold: 0,
+    deleteKeyCode: 'd',
     nodes: [
       {
         id: 'Node-1',

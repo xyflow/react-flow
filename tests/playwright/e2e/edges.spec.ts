@@ -92,7 +92,7 @@ test.describe('Edges', () => {
       await edge.click();
       await expect(edge).toHaveClass(/selected/);
 
-      await page.keyboard.press('Backspace');
+      await page.keyboard.press('d');
 
       await expect(edge).not.toBeAttached();
     });
@@ -115,7 +115,7 @@ test.describe('Edges', () => {
       // TODO: times out on webkit
       await expect(edge).toHaveClass(/selected/);
 
-      await page.keyboard.press('Backspace');
+      await page.keyboard.press('d');
       await expect(edge).toBeAttached();
     });
 

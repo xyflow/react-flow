@@ -6,7 +6,7 @@ import type { ReactFlowState } from '../../types';
 
 const selector = (s: ReactFlowState) => s.domNode?.querySelector('.react-flow__viewport-portal');
 
-export function ViewportPortal({ children }: { children: ReactNode }) {
+export function ViewportPortal({ children }: { children: ReactNode }) : JSX.Element | null {
   const viewPortalDiv = useStore(selector);
 
   if (!viewPortalDiv) {

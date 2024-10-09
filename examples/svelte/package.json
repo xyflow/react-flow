@@ -12,25 +12,25 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.2.1",
-		"@sveltejs/kit": "^2.5.10",
-		"@typescript-eslint/eslint-plugin": "^6.10.0",
-		"@typescript-eslint/parser": "^6.10.0",
-		"eslint": "^8.53.0",
-		"eslint-config-prettier": "^9.0.0",
-		"eslint-plugin-svelte": "^2.35.0",
-		"prettier": "^3.0.3",
-		"prettier-plugin-svelte": "^3.0.3",
-		"svelte": "^4.2.12",
-		"svelte-check": "^3.6.6",
-		"tslib": "^2.6.2",
-		"typescript": "^5.2.2",
-		"vite": "^5.2.12"
+		"@sveltejs/adapter-auto": "^3.2.5",
+		"@sveltejs/kit": "^2.6.4",
+		"@typescript-eslint/eslint-plugin": "^8.8.1",
+		"@typescript-eslint/parser": "^8.8.1",
+		"eslint": "^8.56.0",
+		"eslint-config-prettier": "^8.10.0",
+		"eslint-plugin-svelte": "^2.44.1",
+		"prettier": "^3.3.3",
+		"prettier-plugin-svelte": "^3.2.7",
+		"svelte": "^4.2.19",
+		"svelte-check": "^4.0.4",
+		"tslib": "^2.7.0",
+		"typescript": "5.5.4",
+		"vite": "^5.4.8"
 	},
 	"type": "module",
 	"dependencies": {
-		"@dagrejs/dagre": "^1.0.4",
-		"@sveltejs/vite-plugin-svelte": "^3.1.1",
+		"@dagrejs/dagre": "^1.1.4",
+		"@sveltejs/vite-plugin-svelte": "^3.1.2",
 		"@xyflow/svelte": "workspace:^"
 	}
 }

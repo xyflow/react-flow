@@ -37,7 +37,6 @@ export function NodeWrapper<NodeType extends Node>({
   disableKeyboardA11y,
   rfId,
   nodeTypes,
-  nodeExtent,
   nodeClickDistance,
   onError,
 }: NodeWrapperProps<NodeType>) {

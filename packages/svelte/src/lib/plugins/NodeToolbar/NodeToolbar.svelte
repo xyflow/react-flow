@@ -27,7 +27,8 @@
   let _align = align !== undefined ? align : 'center';
 
   $: {
-    // nly needed to trigger updates, $nodeLookup is just a helper that does not trigger any updates
+    // only needed to trigger updates, $nodeLookup is just a helper that does not trigger any updates
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     $nodes;
 
     const nodeIds = Array.isArray(nodeId) ? nodeId : [nodeId || contextNodeId];

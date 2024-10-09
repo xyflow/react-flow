@@ -7,6 +7,7 @@ export default {
 		nodeTypes: {
 			DragHandleNode
 		},
+		deleteKey: 'd',
 		nodes: [
 			{
 				id: 'Node-1',

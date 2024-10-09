@@ -77,6 +77,7 @@
   $: {
     boundingRect =
       $nodeLookup.size > 0 ? getBoundsOfRects(getInternalNodesBounds($nodeLookup), viewBB) : viewBB;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     $nodes;
   }
 

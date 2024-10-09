@@ -11,7 +11,6 @@ import {
   type UpdateConnection,
   type IsValidConnection,
   NodeLookup,
-  ConnectionState,
   FinalConnectionState,
 } from '../types';
 
