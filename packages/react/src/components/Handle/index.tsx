@@ -8,7 +8,8 @@ import {
 import cc from 'classcat';
 import { shallow } from 'zustand/shallow';
 import {
-  errorMessages,
+  XYError,
+  XYErrorCode,
   Position,
   XYHandle,
   getHostForElement,
@@ -89,7 +90,8 @@ function HandleComponent(
   );
 
   if (!nodeId) {
-    store.getState().onError?.('010', errorMessages['error010']());
+    const error = new XYError(XYErrorCode.HANDLE_NODE_ID_NOT_FOUND);
+    store.getState().onError?.(error.code, error.message, error);
   }
 
   const onConnectExtended = (params: Connection) => {

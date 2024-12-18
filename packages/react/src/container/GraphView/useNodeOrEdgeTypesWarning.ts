@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { errorMessages } from '@xyflow/system';
 
 import { useStoreApi } from '../../hooks/useStore';
 import type { EdgeTypes, NodeTypes } from '../../types';
+import { XYError, XYErrorCode } from '@xyflow/system';
 
 const emptyTypes = {};
 
@@ -25,7 +25,8 @@ export function useNodeOrEdgeTypesWarning(nodeOrEdgeTypes: any = emptyTypes): an
 
       for (const key of usedKeys) {
         if (typesRef.current[key] !== nodeOrEdgeTypes[key]) {
-          store.getState().onError?.('002', errorMessages['error002']());
+          const error = new XYError(XYErrorCode.NODE_EDGE_TYPES_OBJECT_RECREATED);
+          store.getState().onError?.(error.code, error.message, error);
           break;
         }
       }

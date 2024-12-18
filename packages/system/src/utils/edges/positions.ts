@@ -2,9 +2,9 @@ import { EdgePosition } from '../../types/edges';
 import { ConnectionMode, OnError } from '../../types/general';
 import { InternalNodeBase, NodeHandle } from '../../types/nodes';
 import { Position, XYPosition } from '../../types/utils';
-import { errorMessages } from '../../constants';
 import { Handle } from '../../types';
 import { getNodeDimensions } from '../general';
+import { XYError, XYErrorCode } from '../../xyerror';
 
 export type GetEdgePositionParams = {
   id: string;
@@ -44,14 +44,13 @@ export function getEdgePosition(params: GetEdgePositionParams): EdgePosition | n
   );
 
   if (!sourceHandle || !targetHandle) {
-    params.onError?.(
-      '008',
-      errorMessages['error008'](!sourceHandle ? 'source' : 'target', {
-        id: params.id,
-        sourceHandle: params.sourceHandle,
-        targetHandle: params.targetHandle,
-      })
-    );
+    const error = new XYError(XYErrorCode.EDGE_SOURCE_TARGET_HANDLE_NOT_FOUND, !sourceHandle ? 'source' : 'target', {
+      id: params.id,
+      sourceHandle: params.sourceHandle,
+      targetHandle: params.targetHandle,
+    });
+
+    params.onError?.(error.code, error.message, error);
 
     return null;
   }

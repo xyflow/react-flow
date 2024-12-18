@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { errorMessages } from '@xyflow/system';
 
 import { useStoreApi } from '../../hooks/useStore';
+import { XYError, XYErrorCode } from '@xyflow/system';
 
 export function useStylesLoadedWarning() {
   const store = useStoreApi();
@@ -13,7 +13,8 @@ export function useStylesLoadedWarning() {
         const pane = document.querySelector('.react-flow__pane');
 
         if (pane && !(window.getComputedStyle(pane).zIndex === '1')) {
-          store.getState().onError?.('013', errorMessages['error013']('react'));
+          const error = new XYError(XYErrorCode.MISSING_STYLES, 'react');
+          store.getState().onError?.(error.code, error.message, error);
         }
 
         checked.current = true;

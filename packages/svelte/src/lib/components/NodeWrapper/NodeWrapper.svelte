@@ -4,7 +4,7 @@
   import { setContext, onDestroy, createEventDispatcher } from 'svelte';
   import { get, writable } from 'svelte/store';
   import cc from 'classcat';
-  import { errorMessages, Position } from '@xyflow/system';
+  import { Position,  XYError, XYErrorCode } from '@xyflow/system';
 
   import drag from '$lib/actions/drag';
   import { useStore } from '$lib/store';
@@ -72,7 +72,8 @@
 
   $: {
     if (!nodeTypeValid) {
-      console.warn('003', errorMessages['error003'](type!));
+      const error = new XYError(XYErrorCode.NODE_TYPE_NOT_FOUND, type)
+      console.warn(error.code, error.message);
     }
   }
 

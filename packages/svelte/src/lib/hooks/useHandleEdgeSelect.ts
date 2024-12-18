@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
-import { errorMessages } from '@xyflow/system';
 
 import { useStore } from '$lib/store';
+import { XYError, XYErrorCode } from '@xyflow/system';
 
 export function useHandleEdgeSelect() {
   const {
@@ -18,7 +18,8 @@ export function useHandleEdgeSelect() {
     const edge = get(edgeLookup).get(id);
 
     if (!edge) {
-      console.warn('012', errorMessages['error012'](id));
+      const error = new XYError(XYErrorCode.NODE_NOT_FOUND, id);
+      console.warn(error.code, error.message);
       return;
     }
 

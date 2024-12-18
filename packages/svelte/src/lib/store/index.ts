@@ -8,7 +8,6 @@ import {
   updateNodeInternals as updateNodeInternalsSystem,
   addEdge as addEdgeUtil,
   initialConnection,
-  errorMessages,
   pointToRendererPoint,
   type UpdateNodePositions,
   type InternalNodeUpdate,
@@ -21,7 +20,9 @@ import {
   type NodeOrigin,
   getFitViewNodes,
   updateAbsolutePositions,
-  getDimensions
+  getDimensions,
+  XYError,
+  XYErrorCode
 } from '@xyflow/system';
 
 import type { EdgeTypes, NodeTypes, Node, Edge, FitViewOptions } from '$lib/types';
@@ -359,7 +360,8 @@ export function createStore({
     const node = get(store.nodes)?.find((n) => n.id === id);
 
     if (!node) {
-      console.warn('012', errorMessages['error012'](id));
+      const error = new XYError(XYErrorCode.NODE_NOT_FOUND, id);
+      console.warn(error.code, error.message);
       return;
     }
 
