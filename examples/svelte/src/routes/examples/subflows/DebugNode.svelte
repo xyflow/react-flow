@@ -3,12 +3,23 @@
 
 	type $$Props = NodeProps;
 
-	export let id: string;
-	export let positionAbsoluteX: number = 0;
-	export let positionAbsoluteY: number = 0;
-	export let zIndex: number = 0;
+	interface Props {
+		id: string;
+		positionAbsoluteX?: number;
+		positionAbsoluteY?: number;
+		zIndex?: number;
+		[key: string]: any
+	}
 
-	$$restProps;
+	let {
+		id,
+		positionAbsoluteX = 0,
+		positionAbsoluteY = 0,
+		zIndex = 0,
+		...rest
+	}: Props = $props();
+
+	rest;
 </script>
 
 <Handle type="target" position={Position.Top} />

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -17,7 +16,7 @@
 		targetPosition: Position.Left
 	};
 
-	const nodes = writable([
+	let nodes = $state.raw([
 		{
 			id: '0',
 			position: { x: 0, y: 150 },
@@ -29,7 +28,7 @@
 		{ id: 'C', position: { x: 250, y: 300 }, data: { label: 'C' }, ...nodeDefaults }
 	]);
 
-	const edges = writable([]);
+	let edges = $state.raw([]);
 
 	const isValidConnection: IsValidConnection = (connection) => connection.target === 'B';
 
@@ -39,8 +38,8 @@
 </script>
 
 <SvelteFlow
-	{nodes}
-	{edges}
+	bind:nodes
+	bind:edges
 	fitView
 	minZoom={0.1}
 	maxZoom={2.5}

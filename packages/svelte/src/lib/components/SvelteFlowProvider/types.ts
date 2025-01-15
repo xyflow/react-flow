@@ -1,5 +1,6 @@
-import type { Edge, Node } from '$lib/types';
+import type { Snippet } from 'svelte';
 import type { NodeOrigin } from '@xyflow/system';
+import type { Edge, Node } from '$lib/types';
 
 export type SvelteFlowProviderProps = {
   initialNodes?: Node[];
@@ -8,4 +9,5 @@ export type SvelteFlowProviderProps = {
   initialHeight?: number;
   fitView?: boolean;
   nodeOrigin?: NodeOrigin;
+  children?: Snippet;
 };

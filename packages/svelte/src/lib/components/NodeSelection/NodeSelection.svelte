@@ -1,41 +1,41 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import { getInternalNodesBounds, isNumeric, type Rect } from '@xyflow/system';
 
-  import { useStore } from '$lib/store';
   import { Selection } from '$lib/components/Selection';
   import drag from '$lib/actions/drag';
-  import type { Node, NodeEventMap } from '$lib/types';
 
-  const store = useStore();
-  const { selectionRectMode, nodes, nodeLookup } = store;
+  import type { NodeSelectionProps } from './types';
 
-  const dispatch = createEventDispatcher<
-    NodeEventMap & {
-      selectioncontextmenu: { nodes: Node[]; event: MouseEvent | TouchEvent };
-      selectionclick: { nodes: Node[]; event: MouseEvent | TouchEvent };
+  let {
+    store,
+    onnodedrag,
+    onnodedragstart,
+    onnodedragstop,
+    onselectionclick,
+    onselectioncontextmenu
+  }: NodeSelectionProps = $props();
+
+  let bounds: Rect | null = $derived.by(() => {
+    if (store.selectionRectMode === 'nodes') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      store.nodes;
+      return getInternalNodesBounds(store.nodeLookup, { filter: (node) => !!node.selected });
     }
-  >();
+    return null;
+  });
 
-  let bounds: Rect | null = null;
-
-  $: if ($selectionRectMode === 'nodes') {
-    bounds = getInternalNodesBounds($nodeLookup, { filter: (node) => !!node.selected });
-    $nodes;
+  function oncontextmenu(event: MouseEvent | TouchEvent) {
+    const selectedNodes = store.nodes.filter((n) => n.selected);
+    onselectioncontextmenu?.({ nodes: selectedNodes, event });
   }
 
-  function onContextMenu(event: MouseEvent | TouchEvent) {
-    const selectedNodes = $nodes.filter((n) => n.selected);
-    dispatch('selectioncontextmenu', { nodes: selectedNodes, event });
-  }
-
-  function onClick(event: MouseEvent | TouchEvent) {
-    const selectedNodes = $nodes.filter((n) => n.selected);
-    dispatch('selectionclick', { nodes: selectedNodes, event });
+  function onclick(event: MouseEvent | TouchEvent) {
+    const selectedNodes = store.nodes.filter((n) => n.selected);
+    onselectionclick?.({ nodes: selectedNodes, event });
   }
 </script>
 
-{#if $selectionRectMode === 'nodes' && bounds && isNumeric(bounds.x) && isNumeric(bounds.y)}
+{#if store.selectionRectMode === 'nodes' && bounds && isNumeric(bounds.x) && isNumeric(bounds.y)}
   <div
     class="selection-wrapper nopan"
     style="width: {bounds.width}px; height: {bounds.height}px; transform: translate({bounds.x}px, {bounds.y}px)"
@@ -43,20 +43,20 @@
       disabled: false,
       store,
       onDrag: (event, _, __, nodes) => {
-        dispatch('nodedrag', { event, targetNode: null, nodes });
+        onnodedrag?.({ event, targetNode: null, nodes });
       },
       onDragStart: (event, _, __, nodes) => {
-        dispatch('nodedragstart', { event, targetNode: null, nodes });
+        onnodedragstart?.({ event, targetNode: null, nodes });
       },
       onDragStop: (event, _, __, nodes) => {
-        dispatch('nodedragstop', { event, targetNode: null, nodes });
+        onnodedragstop?.({ event, targetNode: null, nodes });
       }
     }}
-    on:contextmenu={onContextMenu}
-    on:click={onClick}
+    {oncontextmenu}
+    {onclick}
     role="button"
     tabindex="-1"
-    on:keyup={() => {}}
+    onkeyup={() => {}}
   >
     <Selection width="100%" height="100%" x={0} y={0} />
   </div>

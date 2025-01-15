@@ -1,16 +1,16 @@
 <script lang="ts">
   import { type MarkerProps, MarkerType } from '@xyflow/system';
 
-  type $$Props = MarkerProps;
-
-  export let id: $$Props['id'];
-  export let type: $$Props['type'];
-  export let width: $$Props['width'] = 12.5;
-  export let height: $$Props['height'] = 12.5;
-  export let markerUnits: $$Props['markerUnits'] = 'strokeWidth';
-  export let orient: $$Props['orient'] = 'auto-start-reverse';
-  export let color: $$Props['color'] = undefined;
-  export let strokeWidth: $$Props['strokeWidth'] = undefined;
+  let {
+    id,
+    type,
+    width = 12.5,
+    height = 12.5,
+    markerUnits = 'strokeWidth',
+    orient = 'auto-start-reverse',
+    color,
+    strokeWidth
+  }: MarkerProps = $props();
 </script>
 
 <marker

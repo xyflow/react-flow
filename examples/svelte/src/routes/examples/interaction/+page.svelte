@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -13,7 +12,7 @@
 
 	import '@xyflow/svelte/dist/style.css';
 
-	const nodes = writable([
+	let nodes = $state.raw([
 		{
 			id: '1',
 			type: 'input',
@@ -25,7 +24,7 @@
 		{ id: '4', data: { label: 'Node 4' }, position: { x: 400, y: 200 } }
 	]);
 
-	const edges = writable([
+	let edges = $state.raw([
 		{ id: 'e1-2', source: '1', target: '2', animated: true },
 		{ id: 'e1-3', source: '1', target: '3' }
 	]);
@@ -39,23 +38,23 @@
 	const onPaneContextMenu = (event: MouseEvent) => console.log('onPaneContextMenu', event);
 	const onMoveEnd: OnMoveEnd = (_, viewport) => console.log('onMoveEnd', viewport);
 
-	let isSelectable = false;
-	let isDraggable = false;
-	let isConnectable = false;
-	let zoomOnScroll = false;
-	let zoomOnPinch = false;
-	let panOnScroll = false;
-	let panOnScrollMode = PanOnScrollMode.Free;
-	let zoomOnDoubleClick = false;
-	let panOnDrag = true;
-	let captureZoomClick = false;
-	let captureZoomScroll = false;
-	let captureElementClick = false;
+	let isSelectable = $state(false);
+	let isDraggable = $state(false);
+	let isConnectable = $state(false);
+	let zoomOnScroll = $state(false);
+	let zoomOnPinch = $state(false);
+	let panOnScroll = $state(false);
+	let panOnScrollMode = $state(PanOnScrollMode.Free);
+	let zoomOnDoubleClick = $state(false);
+	let panOnDrag = $state(true);
+	let captureZoomClick = $state(false);
+	let captureZoomScroll = $state(false);
+	let captureElementClick = $state(false);
 </script>
 
 <SvelteFlow
-	{nodes}
-	{edges}
+	bind:nodes
+	bind:edges
 	elementsSelectable={isSelectable}
 	nodesConnectable={isConnectable}
 	nodesDraggable={isDraggable}
@@ -66,6 +65,7 @@
 	{zoomOnDoubleClick}
 	{panOnDrag}
 	{onMoveEnd}
+	fitView
 >
 	<MiniMap />
 	<Controls />
@@ -143,7 +143,7 @@
 				<select
 					id="panonscrollmode"
 					bind:value={panOnScrollMode}
-					on:change={(event) => {
+					onchange={(event) => {
 						panOnScrollMode = PanOnScrollMode.Free;
 					}}
 					class="svelte-flow__panonscrollmode"

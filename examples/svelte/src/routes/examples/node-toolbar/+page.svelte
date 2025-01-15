@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Background,
@@ -11,7 +10,7 @@
 
 	import '@xyflow/svelte/dist/style.css';
 
-	import CustomNode from './CustomNode.svelte';
+	import CustomNode, { type CustomNodeType } from './CustomNode.svelte';
 	import SelectedNodesToolbar from './SelectedNodesToolbar.svelte';
 
 	const nodeTypes: NodeTypes = {
@@ -19,9 +18,9 @@
 	};
 
 	const positions = ['top', 'right', 'bottom', 'left'];
-	const alignments = ['start', 'center', 'end'];
+	const alignments: ('start' | 'center' | 'end')[] = ['start', 'center', 'end'];
 
-	const initialNodes: Node[] = [
+	const initialNodes: CustomNodeType[] = [
 		{
 			id: 'default-node',
 			type: 'custom',
@@ -51,12 +50,12 @@
 
 	const initialEdges: Edge[] = [];
 
-	const nodes = writable<Node[]>(initialNodes);
-	const edges = writable<Edge[]>(initialEdges);
+	let nodes = $state.raw<Node[]>(initialNodes);
+	let edges = $state.raw<Edge[]>(initialEdges);
 </script>
 
 <div style="height: 100vh;">
-	<SvelteFlow {nodes} {edges} {nodeTypes} fitView>
+	<SvelteFlow bind:nodes bind:edges {nodeTypes} fitView>
 		<Background />
 		<SelectedNodesToolbar />
 	</SvelteFlow>

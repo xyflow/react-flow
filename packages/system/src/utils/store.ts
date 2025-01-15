@@ -87,6 +87,7 @@ export function adoptUserNodes<NodeType extends NodeBase>(
   options?: UpdateNodesOptions<NodeType>
 ) {
   const _options = mergeObjects(adoptUserNodesDefaultOptions, options);
+
   const tmpLookup = new Map(nodeLookup);
   const selectedNodeZ: number = _options?.elevateNodesOnSelect ? 1000 : 0;
 
@@ -173,11 +174,15 @@ function updateChildNode<NodeType extends NodeBase>(
   const positionChanged = x !== positionAbsolute.x || y !== positionAbsolute.y;
 
   if (positionChanged || z !== node.internals.z) {
-    node.internals = {
-      ...node.internals,
-      positionAbsolute: positionChanged ? { x, y } : positionAbsolute,
-      z,
-    };
+    // we create a new object to mark the node as updated
+    nodeLookup.set(node.id, {
+      ...node,
+      internals: {
+        ...node.internals,
+        positionAbsolute: positionChanged ? { x, y } : positionAbsolute,
+        z,
+      },
+    });
   }
 }
 
@@ -333,60 +338,70 @@ export function updateNodeInternals<NodeType extends InternalNodeBase>(
     }
 
     if (node.hidden) {
-      node.internals = {
-        ...node.internals,
-        handleBounds: undefined,
-      };
+      nodeLookup.set(node.id, {
+        ...node,
+        internals: {
+          ...node.internals,
+          handleBounds: undefined,
+        },
+      });
       updatedInternals = true;
-    } else {
-      const dimensions = getDimensions(update.nodeElement);
-      const dimensionChanged = node.measured.width !== dimensions.width || node.measured.height !== dimensions.height;
-      const doUpdate = !!(
-        dimensions.width &&
-        dimensions.height &&
-        (dimensionChanged || !node.internals.handleBounds || update.force)
-      );
+      continue;
+    }
 
-      if (doUpdate) {
-        const nodeBounds = update.nodeElement.getBoundingClientRect();
-        const extent = isCoordinateExtent(node.extent) ? node.extent : nodeExtent;
-        let { positionAbsolute } = node.internals;
+    const dimensions = getDimensions(update.nodeElement);
+    const dimensionChanged = node.measured.width !== dimensions.width || node.measured.height !== dimensions.height;
+    const doUpdate = !!(
+      dimensions.width &&
+      dimensions.height &&
+      (dimensionChanged || !node.internals.handleBounds || update.force)
+    );
 
-        if (node.parentId && node.extent === 'parent') {
-          positionAbsolute = clampPositionToParent(positionAbsolute, dimensions, nodeLookup.get(node.parentId)!);
-        } else if (extent) {
-          positionAbsolute = clampPosition(positionAbsolute, extent, dimensions);
-        }
+    if (doUpdate) {
+      const nodeBounds = update.nodeElement.getBoundingClientRect();
+      const extent = isCoordinateExtent(node.extent) ? node.extent : nodeExtent;
+      let { positionAbsolute } = node.internals;
 
-        node.measured = dimensions;
-        node.internals = {
+      if (node.parentId && node.extent === 'parent') {
+        positionAbsolute = clampPositionToParent(positionAbsolute, dimensions, nodeLookup.get(node.parentId)!);
+      } else if (extent) {
+        positionAbsolute = clampPosition(positionAbsolute, extent, dimensions);
+      }
+
+      const newNode = {
+        ...node,
+        measured: dimensions,
+        internals: {
           ...node.internals,
           positionAbsolute,
           handleBounds: {
             source: getHandleBounds('source', update.nodeElement, nodeBounds, zoom, node.id),
             target: getHandleBounds('target', update.nodeElement, nodeBounds, zoom, node.id),
           },
-        };
-        if (node.parentId) {
-          updateChildNode(node, nodeLookup, parentLookup, { nodeOrigin });
-        }
+        },
+      };
 
-        updatedInternals = true;
+      nodeLookup.set(node.id, newNode);
 
-        if (dimensionChanged) {
-          changes.push({
+      if (node.parentId) {
+        updateChildNode(newNode, nodeLookup, parentLookup, { nodeOrigin });
+      }
+
+      updatedInternals = true;
+
+      if (dimensionChanged) {
+        changes.push({
+          id: node.id,
+          type: 'dimensions',
+          dimensions,
+        });
+
+        if (node.expandParent && node.parentId) {
+          parentExpandChildren.push({
             id: node.id,
-            type: 'dimensions',
-            dimensions,
+            parentId: node.parentId,
+            rect: nodeToRect(newNode, nodeOrigin),
           });
-
-          if (node.expandParent && node.parentId) {
-            parentExpandChildren.push({
-              id: node.id,
-              parentId: node.parentId,
-              rect: nodeToRect(node, nodeOrigin),
-            });
-          }
         }
       }
     }

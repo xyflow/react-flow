@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { Node } from '@xyflow/svelte';
 
 	type TextNodeType = Node<{ text: string }, 'text'>;
@@ -13,7 +13,6 @@
 </script>
 
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -35,7 +34,7 @@
 		result: ResultNode
 	};
 
-	const nodes = writable<MyNode[]>([
+	let nodes = $state.raw<MyNode[]>([
 		{
 			id: '1',
 			type: 'text',
@@ -60,7 +59,6 @@
 			},
 			position: { x: 0, y: 100 }
 		},
-
 		{
 			id: '3',
 			type: 'result',
@@ -69,7 +67,7 @@
 		}
 	]);
 
-	const edges = writable<Edge[]>([
+	let edges = $state.raw<Edge[]>([
 		{
 			id: 'e1-1a',
 			source: '1',
@@ -88,7 +86,7 @@
 	]);
 </script>
 
-<SvelteFlow {nodes} {edges} {nodeTypes} fitView>
+<SvelteFlow bind:nodes bind:edges {nodeTypes} fitView>
 	<Controls />
 	<Background variant={BackgroundVariant.Dots} />
 	<MiniMap />

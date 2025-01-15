@@ -36,5 +36,5 @@ export type HandleProps = {
   /** Id of the handle
    * @remarks optional if there is only one handle of this type
    */
-  id?: string;
+  id?: string | null;
 };

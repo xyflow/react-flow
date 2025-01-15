@@ -1,18 +1,31 @@
 <script lang="ts">
   import cc from 'classcat';
 
-  export let x: number;
-  export let y: number;
-  export let width: number = 0;
-  export let height: number = 0;
-  export let borderRadius: number = 5;
-  export let color: string | undefined = undefined;
-  export let shapeRendering: string;
-  export let strokeColor: string | undefined = undefined;
-  export let strokeWidth: number = 2;
-  export let selected: boolean = false;
-  let className: string = '';
-  export { className as class };
+  let {
+    x,
+    y,
+    width,
+    height,
+    borderRadius = 5,
+    color,
+    shapeRendering,
+    strokeColor,
+    strokeWidth = 2,
+    selected,
+    class: className
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    borderRadius?: number;
+    color?: string;
+    shapeRendering: string;
+    strokeColor?: string;
+    strokeWidth?: number;
+    selected?: boolean;
+    class?: string;
+  } = $props();
 </script>
 
 <rect

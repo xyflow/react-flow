@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -12,7 +11,7 @@
 
 	import '@xyflow/svelte/dist/style.css';
 
-	const nodes = writable([
+	let nodes = $state.raw([
 		{
 			id: 'A',
 			position: { x: 0, y: 0 },
@@ -20,27 +19,25 @@
 		},
 		{ id: 'B', position: { x: 0, y: 100 }, data: { label: 'B' } }
 	]);
-	const edges = writable([{ id: 'ab', source: 'A', target: 'B' }]);
-	const viewport = writable<Viewport>({ x: 100, y: 100, zoom: 1.25 });
 
-	const { fitView } = useSvelteFlow();
+	let edges = $state.raw([{ id: 'ab', source: 'A', target: 'B' }]);
+	let viewport = $state<Viewport>({ x: 100, y: 100, zoom: 5 });
+
+	const { fitView } = $derived(useSvelteFlow());
 
 	const updateViewport = () => {
-		$viewport.x += 10;
-		$viewport = $viewport;
+		viewport.x += 10;
 	};
 
-	viewport.subscribe((vp) => {
-		console.log('viewport update', vp);
-	});
+	$inspect(viewport);
 </script>
 
-<SvelteFlow {nodes} {edges} {viewport}>
+<SvelteFlow bind:nodes bind:edges bind:viewport>
 	<Controls />
 	<Background variant={BackgroundVariant.Dots} />
 
 	<Panel>
-		<button on:click={updateViewport}>update viewport</button>
-		<button on:click={() => fitView()}>fitView</button>
+		<button onclick={updateViewport}>update viewport</button>
+		<button onclick={() => fitView()}>fitView</button>
 	</Panel>
 </SvelteFlow>

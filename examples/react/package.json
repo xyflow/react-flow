@@ -7,6 +7,7 @@
     "dev": "vite --port 3000 --open --host",
     "serve": "vite serve --port 3000",
     "build": "vite build",
+    "preview": "vite preview",
     "test:dev": "cypress open",
     "test": "pnpm test-component && pnpm test-e2e",
     "test-component": "cypress run --component",

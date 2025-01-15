@@ -1,3 +1,4 @@
+import type { Snippet } from 'svelte';
 import type { ShortcutModifierDefinition } from '@svelte-put/shortcut';
 import type {
   FitViewOptionsBase,
@@ -27,6 +28,7 @@ export type HandleProps = HandlePropsSystem & {
   style?: string;
   onconnect?: (connections: Connection[]) => void;
   ondisconnect?: (connections: Connection[]) => void;
+  children?: Snippet;
 };
 
 export type FitViewOptions<NodeType extends Node = Node> = FitViewOptionsBase<NodeType>;

@@ -4,6 +4,7 @@ export default {
   flowProps: {
     fitView: true,
     multiSelectionKeyCode: 's',
+    deleteKeyCode: 'd',
     nodes: [
       {
         id: '1',

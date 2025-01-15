@@ -5,7 +5,7 @@
 </script>
 
 <div class="container">
-	<div class="drag-handle custom-drag-handle" />
+	<div class="drag-handle custom-drag-handle"></div>
 </div>
 
 <style>

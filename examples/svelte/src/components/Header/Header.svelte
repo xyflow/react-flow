@@ -35,7 +35,7 @@
 
 <header>
 	<div class="logo">Svelte Flow</div>
-	<select on:change={onChange} value={$page.route.id}>
+	<select onchange={onChange} value={$page.route.id}>
 		{#each routes as route}
 			<option value={`/examples/${route}`}>{route}</option>
 		{/each}

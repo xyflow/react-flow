@@ -6,26 +6,20 @@
   } from '@svelte-put/shortcut';
   import { isInputDOMNode, isMacOs } from '@xyflow/system';
 
-  import { useStore } from '$lib/store';
   import type { KeyHandlerProps } from './types';
   import type { KeyDefinition, KeyDefinitionObject } from '$lib/types';
+  import { useSvelteFlow } from '$lib/hooks/useSvelteFlow.svelte';
 
-  type $$Props = KeyHandlerProps;
+  let {
+    store,
+    selectionKey = 'Shift',
+    multiSelectionKey = isMacOs() ? 'Meta' : 'Control',
+    deleteKey = 'Backspace',
+    panActivationKey = ' ',
+    zoomActivationKey = isMacOs() ? 'Meta' : 'Control'
+  }: KeyHandlerProps = $props();
 
-  export let selectionKey: $$Props['selectionKey'] = 'Shift';
-  export let multiSelectionKey: $$Props['multiSelectionKey'] = isMacOs() ? 'Meta' : 'Control';
-  export let deleteKey: $$Props['deleteKey'] = 'Backspace';
-  export let panActivationKey: $$Props['panActivationKey'] = ' ';
-  export let zoomActivationKey: $$Props['zoomActivationKey'] = isMacOs() ? 'Meta' : 'Control';
-
-  const {
-    selectionKeyPressed,
-    multiselectionKeyPressed,
-    deleteKeyPressed,
-    panActivationKeyPressed,
-    zoomActivationKeyPressed,
-    selectionRect
-  } = useStore();
+  let { deleteElements } = useSvelteFlow();
 
   function isKeyObject(key?: KeyDefinition | null): key is KeyDefinitionObject {
     return key !== null && typeof key === 'object';
@@ -62,12 +56,29 @@
   }
 
   function resetKeysAndSelection() {
-    selectionRect.set(null);
-    selectionKeyPressed.set(false);
-    multiselectionKeyPressed.set(false);
-    deleteKeyPressed.set(false);
-    panActivationKeyPressed.set(false);
-    zoomActivationKeyPressed.set(false);
+    store.selectionRect = null;
+    store.selectionKeyPressed = false;
+    store.multiselectionKeyPressed = false;
+    store.deleteKeyPressed = false;
+    store.panActivationKeyPressed = false;
+    store.zoomActivationKeyPressed = false;
+  }
+
+  async function handleDelete() {
+    const selectedNodes = store.nodes.filter((node) => node.selected);
+    const selectedEdges = store.edges.filter((edge) => edge.selected);
+
+    const { deletedNodes, deletedEdges } = await deleteElements({
+      nodes: selectedNodes,
+      edges: selectedEdges
+    });
+
+    if (deletedNodes.length > 0 || deletedEdges.length > 0) {
+      store.ondelete?.({
+        nodes: deletedNodes,
+        edges: deletedEdges
+      });
+    }
   }
 </script>
 
@@ -75,19 +86,21 @@
   on:blur={resetKeysAndSelection}
   on:contextmenu={resetKeysAndSelection}
   use:shortcut={{
-    trigger: getShortcutTrigger(selectionKey, () => selectionKeyPressed.set(true)),
+    trigger: getShortcutTrigger(selectionKey, () => (store.selectionKeyPressed = true)),
     type: 'keydown'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(selectionKey, () => selectionKeyPressed.set(false)),
+    trigger: getShortcutTrigger(selectionKey, () => (store.selectionKeyPressed = false)),
     type: 'keyup'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(multiSelectionKey, () => multiselectionKeyPressed.set(true)),
+    trigger: getShortcutTrigger(multiSelectionKey, () => {
+      store.multiselectionKeyPressed = true;
+    }),
     type: 'keydown'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(multiSelectionKey, () => multiselectionKeyPressed.set(false)),
+    trigger: getShortcutTrigger(multiSelectionKey, () => (store.multiselectionKeyPressed = false)),
     type: 'keyup'
   }}
   use:shortcut={{
@@ -97,29 +110,30 @@
         detail.originalEvent.metaKey ||
         detail.originalEvent.shiftKey;
       if (!isModifierKey && !isInputDOMNode(detail.originalEvent)) {
-        deleteKeyPressed.set(true);
+        store.deleteKeyPressed = true;
+        handleDelete();
       }
     }),
     type: 'keydown'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(deleteKey, () => deleteKeyPressed.set(false)),
+    trigger: getShortcutTrigger(deleteKey, () => (store.deleteKeyPressed = false)),
     type: 'keyup'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(panActivationKey, () => panActivationKeyPressed.set(true)),
+    trigger: getShortcutTrigger(panActivationKey, () => (store.panActivationKeyPressed = true)),
     type: 'keydown'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(panActivationKey, () => panActivationKeyPressed.set(false)),
+    trigger: getShortcutTrigger(panActivationKey, () => (store.panActivationKeyPressed = false)),
     type: 'keyup'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(zoomActivationKey, () => zoomActivationKeyPressed.set(true)),
+    trigger: getShortcutTrigger(zoomActivationKey, () => (store.zoomActivationKeyPressed = true)),
     type: 'keydown'
   }}
   use:shortcut={{
-    trigger: getShortcutTrigger(zoomActivationKey, () => zoomActivationKeyPressed.set(false)),
+    trigger: getShortcutTrigger(zoomActivationKey, () => (store.zoomActivationKeyPressed = false)),
     type: 'keyup'
   }}
 />

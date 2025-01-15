@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -19,7 +18,7 @@
 		custom: CustomNode
 	};
 
-	const nodes = writable([
+	let nodes = $state.raw([
 		{
 			id: '1',
 			type: 'custom',
@@ -40,7 +39,7 @@
 		}
 	]);
 
-	const edges = writable([
+	let edges = $state.raw([
 		{
 			id: '1-2',
 			source: '1',
@@ -53,7 +52,7 @@
 		}
 	]);
 
-	const { updateNode } = useSvelteFlow();
+	const { updateNode } = $derived(useSvelteFlow());
 
 	const updateNodePosition = () => {
 		updateNode('1', (node) => ({ position: { x: node.position.x + 10, y: node.position.y } }));
@@ -61,12 +60,12 @@
 </script>
 
 <main>
-	<SvelteFlow {nodes} {edges} {nodeTypes} fitView>
+	<SvelteFlow bind:nodes bind:edges {nodeTypes} fitView>
 		<Controls />
 		<Background variant={BackgroundVariant.Dots} />
 		<MiniMap />
 
-		<Panel><button on:click={updateNodePosition}>update node</button></Panel>
+		<Panel><button onclick={updateNodePosition}>update node</button></Panel>
 	</SvelteFlow>
 </main>
 

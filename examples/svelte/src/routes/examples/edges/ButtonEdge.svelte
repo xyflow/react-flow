@@ -1,30 +1,55 @@
 <script lang="ts">
-	import { getBezierPath, BaseEdge, type EdgeProps, EdgeLabelRenderer } from '@xyflow/svelte';
+	import {
+		getBezierPath,
+		BaseEdge,
+		type EdgeProps,
+		EdgeLabelRenderer,
+		useSvelteFlow,
+		MarkerType
+	} from '@xyflow/svelte';
 
 	type $$Props = EdgeProps;
 
-	export let id: $$Props['id'] = '';
-	export let style: $$Props['style'] = undefined;
-	export let markerEnd: $$Props['markerEnd'] = undefined;
+	interface Props {
+		id?: $$Props['id'];
+		style?: $$Props['style'];
+		markerEnd?: $$Props['markerEnd'];
+		sourceX: $$Props['sourceX'];
+		sourceY: $$Props['sourceY'];
+		sourcePosition: $$Props['sourcePosition'];
+		targetX: $$Props['targetX'];
+		targetY: $$Props['targetY'];
+		targetPosition: $$Props['targetPosition'];
+		[key: string]: any;
+	}
 
-	export let sourceX: $$Props['sourceX'];
-	export let sourceY: $$Props['sourceY'];
-	export let sourcePosition: $$Props['sourcePosition'];
-
-	export let targetX: $$Props['targetX'];
-	export let targetY: $$Props['targetY'];
-	export let targetPosition: $$Props['targetPosition'];
-
-	$$restProps;
-
-	$: [edgePath, labelX, labelY] = getBezierPath({
+	let {
+		id = '',
+		style = undefined,
+		markerEnd = undefined,
 		sourceX,
 		sourceY,
 		sourcePosition,
 		targetX,
 		targetY,
-		targetPosition
-	});
+		targetPosition,
+		...rest
+	}: Props = $props();
+
+	rest;
+
+	let [edgePath, labelX, labelY] = $derived(
+		getBezierPath({
+			sourceX,
+			sourceY,
+			sourcePosition,
+			targetX,
+			targetY,
+			targetPosition
+		})
+	);
+
+	const { updateEdge } = useSvelteFlow();
 </script>
 
 <BaseEdge path={edgePath} {markerEnd} {style} />
@@ -35,9 +60,26 @@
 	>
 		<button
 			class="edgeButton"
-			on:click={(event) => {
+			onclick={(event) => {
 				event.stopPropagation();
-				alert(`remove ${id}`);
+				updateEdge('e5-6', {
+					markerEnd: {
+						type: MarkerType.Arrow,
+						color: '#FFCC00',
+						markerUnits: 'userSpaceOnUse',
+						width: 20,
+						height: 20,
+						strokeWidth: 2
+					},
+					markerStart: {
+						type: MarkerType.ArrowClosed,
+						color: '#FFCC00',
+						orient: 'auto-start-reverse',
+						markerUnits: 'userSpaceOnUse',
+						width: 20,
+						height: 20
+					}
+				});
 			}}
 		>
 			×

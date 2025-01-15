@@ -1,4 +1,3 @@
-import { get } from 'svelte/store';
 import { XYDrag, type OnDrag } from '@xyflow/system';
 
 import type { SvelteFlowStore } from '$lib/store/types';
@@ -25,24 +24,23 @@ export default function drag(domNode: Element, params: UseDragParams) {
     onDragStop,
     onNodeMouseDown,
     getStoreItems: () => {
-      const snapGrid = get(store.snapGrid);
-      const vp = get(store.viewport);
+      const { snapGrid, viewport } = store;
 
       return {
-        nodes: get(store.nodes),
-        nodeLookup: get(store.nodeLookup),
-        edges: get(store.edges),
-        nodeExtent: get(store.nodeExtent),
+        nodes: store.nodes,
+        nodeLookup: store.nodeLookup,
+        edges: store.edges,
+        nodeExtent: store.nodeExtent,
         snapGrid: snapGrid ? snapGrid : [0, 0],
         snapToGrid: !!snapGrid,
-        nodeOrigin: get(store.nodeOrigin),
-        multiSelectionActive: get(store.multiselectionKeyPressed),
-        domNode: get(store.domNode),
-        transform: [vp.x, vp.y, vp.zoom],
-        autoPanOnNodeDrag: get(store.autoPanOnNodeDrag),
-        nodesDraggable: get(store.nodesDraggable),
-        selectNodesOnDrag: get(store.selectNodesOnDrag),
-        nodeDragThreshold: get(store.nodeDragThreshold),
+        nodeOrigin: store.nodeOrigin,
+        multiSelectionActive: store.multiselectionKeyPressed,
+        domNode: store.domNode,
+        transform: [viewport.x, viewport.y, viewport.zoom],
+        autoPanOnNodeDrag: store.autoPanOnNodeDrag,
+        nodesDraggable: store.nodesDraggable,
+        selectNodesOnDrag: store.selectNodesOnDrag,
+        nodeDragThreshold: store.nodeDragThreshold,
         unselectNodesAndEdges: store.unselectNodesAndEdges,
         updateNodePositions: store.updateNodePositions,
         panBy: store.panBy

@@ -12,36 +12,27 @@
 
   import type { ControlsProps } from './types';
 
-  type $$Props = ControlsProps;
+  let {
+    position = 'bottom-left',
+    orientation = 'vertical',
+    showZoom = true,
+    showFitView = true,
+    showLock = true,
+    style,
+    class: className,
+    buttonBgColor,
+    buttonBgColorHover,
+    buttonColor,
+    buttonColorHover,
+    buttonBorderColor,
+    'aria-label': ariaLabel,
+    fitViewOptions,
+    children,
+    before,
+    after
+  }: ControlsProps = $props();
 
-  export let position: $$Props['position'] = 'bottom-left';
-  export let showZoom: $$Props['showZoom'] = true;
-  export let showFitView: $$Props['showFitView'] = true;
-  export let showLock: $$Props['showLock'] = true;
-  export let buttonBgColor: $$Props['buttonBgColor'] = undefined;
-  export let buttonBgColorHover: $$Props['buttonBgColorHover'] = undefined;
-  export let buttonColor: $$Props['buttonColor'] = undefined;
-  export let buttonColorHover: $$Props['buttonColorHover'] = undefined;
-  export let buttonBorderColor: $$Props['buttonColorHover'] = undefined;
-  export let ariaLabel: $$Props['aria-label'] = undefined;
-  export let style: $$Props['style'] = undefined;
-  export let orientation: $$Props['orientation'] = 'vertical';
-  export let fitViewOptions: $$Props['fitViewOptions'] = undefined;
-
-  let className: $$Props['class'] = '';
-  export { className as class };
-
-  const {
-    zoomIn,
-    zoomOut,
-    fitView,
-    viewport,
-    minZoom,
-    maxZoom,
-    nodesDraggable,
-    nodesConnectable,
-    elementsSelectable
-  } = useStore();
+  const store = useStore();
 
   const buttonProps = {
     bgColor: buttonBgColor,
@@ -51,31 +42,32 @@
     borderColor: buttonBorderColor
   };
 
-  $: isInteractive = $nodesDraggable || $nodesConnectable || $elementsSelectable;
-  $: minZoomReached = $viewport.zoom <= $minZoom;
-  $: maxZoomReached = $viewport.zoom >= $maxZoom;
+  let isInteractive = $state(
+    store.nodesDraggable || store.nodesConnectable || store.elementsSelectable
+  );
+  let minZoomReached = $derived(store.viewport.zoom <= store.minZoom);
+  let maxZoomReached = $derived(store.viewport.zoom >= store.maxZoom);
+  let orientationClass = $derived(orientation === 'horizontal' ? 'horizontal' : 'vertical');
 
   const onZoomInHandler = () => {
-    zoomIn();
+    store.zoomIn();
   };
 
   const onZoomOutHandler = () => {
-    zoomOut();
+    store.zoomOut();
   };
 
   const onFitViewHandler = () => {
-    fitView(fitViewOptions);
+    store.fitView(fitViewOptions);
   };
 
   const onToggleInteractivity = () => {
     isInteractive = !isInteractive;
 
-    nodesDraggable.set(isInteractive);
-    nodesConnectable.set(isInteractive);
-    elementsSelectable.set(isInteractive);
+    store.nodesDraggable = isInteractive;
+    store.nodesConnectable = isInteractive;
+    store.elementsSelectable = isInteractive;
   };
-
-  $: orientationClass = orientation === 'horizontal' ? 'horizontal' : 'vertical';
 </script>
 
 <Panel
@@ -85,10 +77,12 @@
   aria-label={ariaLabel ?? 'Svelte Flow controls'}
   {style}
 >
-  <slot name="before" />
+  {#if before}
+    {@render before()}
+  {/if}
   {#if showZoom}
     <ControlButton
-      on:click={onZoomInHandler}
+      onclick={onZoomInHandler}
       class="svelte-flow__controls-zoomin"
       title="zoom in"
       aria-label="zoom in"
@@ -98,7 +92,7 @@
       <PlusIcon />
     </ControlButton>
     <ControlButton
-      on:click={onZoomOutHandler}
+      onclick={onZoomOutHandler}
       class="svelte-flow__controls-zoomout"
       title="zoom out"
       aria-label="zoom out"
@@ -111,7 +105,7 @@
   {#if showFitView}
     <ControlButton
       class="svelte-flow__controls-fitview"
-      on:click={onFitViewHandler}
+      onclick={onFitViewHandler}
       title="fit view"
       aria-label="fit view"
       {...buttonProps}
@@ -122,7 +116,7 @@
   {#if showLock}
     <ControlButton
       class="svelte-flow__controls-interactive"
-      on:click={onToggleInteractivity}
+      onclick={onToggleInteractivity}
       title="toggle interactivity"
       aria-label="toggle interactivity"
       {...buttonProps}
@@ -130,6 +124,10 @@
       {#if isInteractive}<UnlockIcon />{:else}<LockIcon />{/if}
     </ControlButton>
   {/if}
-  <slot />
-  <slot name="after" />
+  {#if children}
+    {@render children()}
+  {/if}
+  {#if after}
+    {@render after()}
+  {/if}
 </Panel>

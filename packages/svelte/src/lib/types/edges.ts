@@ -1,4 +1,4 @@
-import type { SvelteComponent, ComponentType } from 'svelte';
+import type { Component } from 'svelte';
 import type {
   EdgeBase,
   BezierPathOptions,
@@ -20,6 +20,28 @@ export type Edge<
   label?: string;
   labelStyle?: string;
   style?: string;
+  class?: string;
+};
+
+export type BaseEdgeProps = Pick<
+  EdgeProps,
+  'interactionWidth' | 'label' | 'labelStyle' | 'style'
+> & {
+  id?: string;
+  /** SVG path of the edge */
+  path: string;
+  /** The x coordinate of the label */
+  labelX?: number;
+  /** The y coordinate of the label */
+  labelY?: number;
+  /** Marker at start of edge
+   * @example 'url(#arrow)'
+   */
+  markerStart?: string;
+  /** Marker at end of edge
+   * @example 'url(#arrow)'
+   */
+  markerEnd?: string;
   class?: string;
 };
 
@@ -113,15 +135,13 @@ export type StraightEdgeProps = Omit<EdgeComponentProps, 'sourcePosition' | 'tar
 
 export type EdgeTypes = Record<
   string,
-  ComponentType<
-    SvelteComponent<
-      EdgeProps & {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data?: any;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type: any;
-      }
-    >
+  Component<
+    EdgeProps & {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data?: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      type: any;
+    }
   >
 >;
 
@@ -156,4 +176,5 @@ export type EdgeLayouted = Pick<
     targetNode?: Node;
     sourceHandleId?: string | null;
     targetHandleId?: string | null;
+    edge: Edge;
   };

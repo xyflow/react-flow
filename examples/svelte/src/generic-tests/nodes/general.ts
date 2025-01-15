@@ -4,6 +4,9 @@ export default {
 	flowProps: {
 		fitView: true,
 		nodeDragThreshold: 0,
+		autoPanOnConnect: false,
+		autoPanOnNodeDrag: false,
+		deleteKey: 'd',
 		nodeTypes: {
 			DragHandleNode
 		},

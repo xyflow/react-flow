@@ -1,5 +1,13 @@
+<script lang="ts" module>
+	// TODO: Is this the best way?
+	class background {
+		color: string = $state('#1A192B');
+	}
+
+	export const bg = new background();
+</script>
+
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -20,9 +28,7 @@
 		colorNode: CustomNode
 	};
 
-	const bgColor = writable('#1A192B');
-
-	const nodes = writable<Node[]>([
+	let nodes = $state.raw<Node[]>([
 		{
 			id: '1',
 			type: 'input',
@@ -33,7 +39,7 @@
 		{
 			id: '2',
 			type: 'colorNode',
-			data: { colorStore: bgColor },
+			data: {},
 			position: { x: 250, y: 50 }
 		},
 		{
@@ -52,7 +58,7 @@
 		}
 	]);
 
-	const edges = writable<Edge[]>([
+	let edges = $state.raw<Edge[]>([
 		{
 			id: 'e1-2',
 			source: '1',
@@ -81,10 +87,10 @@
 </script>
 
 <SvelteFlow
-	{nodes}
-	{edges}
+	bind:nodes
+	bind:edges
 	{nodeTypes}
-	style="--xy-background-color: {$bgColor}"
+	style="--xy-background-color: {bg.color}"
 	fitView
 	onconnect={onConnect}
 >

@@ -4,16 +4,14 @@
   import { Handle } from '$lib/components/Handle';
   import type { NodeProps } from '$lib/types';
 
-  interface $$Props extends NodeProps {}
-
-  export let data: $$Props['data'] = { label: 'Node' };
-  export let targetPosition: $$Props['targetPosition'] = undefined;
-  export let sourcePosition: $$Props['sourcePosition'] = undefined;
-
-  // this is a workaround for suppressing the warning about unused props
-  $$restProps;
+  let {
+    // TODO: do we really want this!?
+    data = { label: 'Node' },
+    targetPosition = Position.Top,
+    sourcePosition = Position.Bottom
+  }: NodeProps = $props();
 </script>
 
-<Handle type="target" position={targetPosition ?? Position.Top} />
+<Handle type="target" position={targetPosition} />
 {data?.label}
-<Handle type="source" position={sourcePosition ?? Position.Bottom} />
+<Handle type="source" position={sourcePosition} />

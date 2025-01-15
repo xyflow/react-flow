@@ -1,7 +1,9 @@
-import type { OnMoveStart, OnMove, OnMoveEnd, PanOnScrollMode, Viewport } from '@xyflow/system';
+import type { SvelteFlowStore } from '$lib/store/types';
+import type { OnMoveStart, OnMove, OnMoveEnd, PanOnScrollMode } from '@xyflow/system';
+import type { Snippet } from 'svelte';
 
 export type ZoomProps = {
-  initialViewport?: Viewport;
+  store: SvelteFlowStore;
   panOnScrollMode: PanOnScrollMode;
   onMove?: OnMove;
   onMoveStart?: OnMoveStart;
@@ -13,4 +15,5 @@ export type ZoomProps = {
   panOnScroll: boolean;
   panOnDrag: boolean | number[];
   paneClickDistance: number;
+  children: Snippet;
 };

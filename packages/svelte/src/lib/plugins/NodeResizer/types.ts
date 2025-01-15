@@ -6,6 +6,7 @@ import type {
   OnResize,
   OnResizeEnd
 } from '@xyflow/system';
+import type { Snippet } from 'svelte';
 
 export type NodeResizerProps = {
   /** Id of the node it is resizing
@@ -69,4 +70,5 @@ export type ResizeControlProps = Pick<
   variant?: ResizeControlVariant;
   class?: string;
   style?: string;
+  children?: Snippet;
 };

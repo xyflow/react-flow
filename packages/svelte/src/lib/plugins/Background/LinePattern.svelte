@@ -2,11 +2,17 @@
   import cc from 'classcat';
   import type { BackgroundVariant } from './types';
 
-  export let lineWidth = 1;
-  export let dimensions: [number, number];
-  export let variant: BackgroundVariant | undefined = undefined;
-  let className: string = '';
-  export { className as class };
+  let {
+    lineWidth,
+    dimensions,
+    variant,
+    class: className
+  }: {
+    lineWidth: number;
+    dimensions: [number, number];
+    variant: BackgroundVariant;
+    class?: string;
+  } = $props();
 </script>
 
 <path

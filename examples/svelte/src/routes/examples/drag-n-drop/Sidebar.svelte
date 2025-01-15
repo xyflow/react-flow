@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { useSvelteFlow } from '@xyflow/svelte';
-
 	const onDragStart = (event: DragEvent, nodeType: string) => {
 		if (!event.dataTransfer) {
 			return null;
@@ -9,29 +7,27 @@
 		event.dataTransfer.setData('application/svelteflow', nodeType);
 		event.dataTransfer.effectAllowed = 'move';
 	};
-
-	const { zoomIn, zoomOut, fitView, viewport, nodes } = useSvelteFlow();
 </script>
 
 <aside>
 	<div class="label">You can drag these nodes to the pane on the left.</div>
 	<div
 		class="input-node node"
-		on:dragstart={(event) => onDragStart(event, 'input')}
+		ondragstart={(event) => onDragStart(event, 'input')}
 		draggable={true}
 	>
 		Input Node
 	</div>
 	<div
 		class="default-node node"
-		on:dragstart={(event) => onDragStart(event, 'default')}
+		ondragstart={(event) => onDragStart(event, 'default')}
 		draggable={true}
 	>
 		Default Node
 	</div>
 	<div
 		class="output-node node"
-		on:dragstart={(event) => onDragStart(event, 'output')}
+		ondragstart={(event) => onDragStart(event, 'output')}
 		draggable={true}
 	>
 		Output Node

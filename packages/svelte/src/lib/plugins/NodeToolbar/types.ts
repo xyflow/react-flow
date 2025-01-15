@@ -1,4 +1,5 @@
 import type { Position, Align } from '@xyflow/system';
+import type { Snippet } from 'svelte';
 
 export type NodeToolbarProps = {
   /** The id of the node, or array of ids the toolbar should be displayed at */
@@ -16,4 +17,5 @@ export type NodeToolbarProps = {
   offset?: number;
   /** If true, node toolbar is visible even if node is not selected */
   isVisible?: boolean;
+  children?: Snippet;
 };

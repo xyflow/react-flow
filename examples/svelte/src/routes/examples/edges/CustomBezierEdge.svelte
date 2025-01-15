@@ -3,22 +3,41 @@
 
 	type $$Props = EdgeProps;
 
-	export let label: $$Props['label'] = undefined;
-	export let labelStyle: $$Props['labelStyle'] = undefined;
-	export let style: $$Props['style'] = undefined;
-	export let markerStart: $$Props['markerStart'] = undefined;
-	export let markerEnd: $$Props['markerEnd'] = undefined;
-	export let interactionWidth: $$Props['interactionWidth'] = undefined;
 
-	export let sourceX: $$Props['sourceX'];
-	export let sourceY: $$Props['sourceY'];
-	export let sourcePosition: $$Props['sourcePosition'];
 
-	export let targetX: $$Props['targetX'];
-	export let targetY: $$Props['targetY'];
-	export let targetPosition: $$Props['targetPosition'];
+	interface Props {
+		label?: $$Props['label'];
+		labelStyle?: $$Props['labelStyle'];
+		style?: $$Props['style'];
+		markerStart?: $$Props['markerStart'];
+		markerEnd?: $$Props['markerEnd'];
+		interactionWidth?: $$Props['interactionWidth'];
+		sourceX: $$Props['sourceX'];
+		sourceY: $$Props['sourceY'];
+		sourcePosition: $$Props['sourcePosition'];
+		targetX: $$Props['targetX'];
+		targetY: $$Props['targetY'];
+		targetPosition: $$Props['targetPosition'];
+		[key: string]: any
+	}
 
-	$$restProps;
+	let {
+		label = undefined,
+		labelStyle = undefined,
+		style = undefined,
+		markerStart = undefined,
+		markerEnd = undefined,
+		interactionWidth = undefined,
+		sourceX,
+		sourceY,
+		sourcePosition,
+		targetX,
+		targetY,
+		targetPosition,
+		...rest
+	}: Props = $props();
+
+	rest;
 </script>
 
 <BezierEdge

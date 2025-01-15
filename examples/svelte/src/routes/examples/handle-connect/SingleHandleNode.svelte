@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { Handle, Position, type NodeProps, type Connection } from '@xyflow/svelte';
 
-	type $$Props = NodeProps;
-
-	export let id: $$Props['id'];
+	let { id }: NodeProps = $props();
 
 	function onConnectTarget(connection: Connection[]) {
 		console.log('connect target', connection);
@@ -20,8 +18,6 @@
 	function onDisconnectSource(connection: Connection[]) {
 		console.log('disconnect source', connection);
 	}
-
-	$$restProps;
 </script>
 
 <div class="custom">

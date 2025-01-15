@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -20,7 +19,7 @@
 		multi: MultiHandleNode
 	};
 
-	const nodes = writable<Node[]>([
+	let nodes = $state.raw<Node[]>([
 		{
 			id: '1',
 			type: 'single',
@@ -60,7 +59,7 @@
 		}
 	]);
 
-	const edges = writable<Edge[]>([
+	let edges = $state.raw<Edge[]>([
 		{
 			id: 'e1-2',
 			source: '1',
@@ -87,7 +86,7 @@
 	]);
 </script>
 
-<SvelteFlow {nodes} {edges} {nodeTypes} fitView colorMode="dark">
+<SvelteFlow bind:nodes bind:edges {nodeTypes} fitView colorMode="dark">
 	<Controls />
 	<Background variant={BackgroundVariant.Dots} />
 	<MiniMap />

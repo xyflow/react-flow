@@ -2,13 +2,10 @@
   import { Panel } from '$lib/container/Panel';
   import type { AttributionProps } from './types';
 
-  type $$Props = AttributionProps;
-
-  export let proOptions: $$Props['proOptions'] = undefined;
-  export let position: $$Props['position'] = 'bottom-right';
+  let { proOptions, position = 'bottom-right' }: AttributionProps = $props();
 </script>
 
-{#if !proOptions?.hideAttribution}
+{#if proOptions?.hideAttribution}
   <Panel
     {position}
     class="svelte-flow__attribution"

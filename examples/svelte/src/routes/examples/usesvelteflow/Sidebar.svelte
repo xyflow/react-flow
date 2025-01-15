@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useEdges, useNodes, useSvelteFlow } from '@xyflow/svelte';
+	import { useEdges, useNodes, useSvelteFlow, useViewport } from '@xyflow/svelte';
 
 	const {
 		zoomIn,
@@ -9,53 +9,58 @@
 		setCenter,
 		setViewport,
 		getViewport,
-		viewport,
 		toObject,
 		deleteElements
 	} = useSvelteFlow();
 
-	const nodes = useNodes();
-	const edges = useEdges();
+	let nodes = useNodes();
+	let edges = useEdges();
+	let viewport = useViewport();
 
 	const deleteNode = () => {
-		$nodes.shift();
-		$nodes = $nodes;
+		//TODO: do we really want to allow this?
+		// nodes.shift();
+		// nodes = nodes;
 	};
 </script>
 
 <aside>
 	<div class="label">Functions:</div>
-	<button on:click={() => zoomIn()}>zoom in</button>
-	<button on:click={() => zoomOut({ duration: 1000 })}>zoom out transition</button>
-	<button on:click={() => setZoom(2)}>set zoom</button>
-	<button on:click={() => fitView()}>fitView</button>
-	<button on:click={() => setCenter(0, 0)}>setCenter 0, 0</button>
-	<button on:click={() => setViewport({ x: 100, y: 100, zoom: 2 })}>setViewport</button>
-	<button on:click={() => console.log(getViewport())}>getViewport</button>
+	<button onclick={() => zoomIn()}>zoom in</button>
+	<button onclick={() => zoomOut({ duration: 1000 })}>zoom out transition</button>
+	<button onclick={() => setZoom(2)}>set zoom</button>
+	<button onclick={() => fitView()}>fitView</button>
+	<button onclick={() => setCenter(0, 0)}>setCenter 0, 0</button>
+	<button onclick={() => setViewport({ x: 100, y: 100, zoom: 2 })}>setViewport</button>
+	<button onclick={() => console.log(getViewport())}>getViewport</button>
 
-	<button on:click={() => deleteElements({ edges: $edges.map((edge) => ({ id: edge.id })) })}
+	<button onclick={() => deleteElements({ edges: edges.current.map((edge) => ({ id: edge.id })) })}
 		>delete edges</button
 	>
-	<button on:click={() => deleteElements({ nodes: [{ id: $nodes[0].id }] })}>delete node</button>
-	<button on:click={() => deleteElements({ nodes: $nodes.map((node) => ({ id: node.id })) })}
+	<button onclick={() => deleteElements({ nodes: [{ id: nodes.current[0].id }] })}
+		>delete node</button
+	>
+	<button onclick={() => deleteElements({ nodes: nodes.current.map((node) => ({ id: node.id })) })}
 		>deleteElements</button
 	>
-	<button on:click={() => deleteNode()}>delete via store</button>
+	<button onclick={() => deleteNode()}>delete via store</button>
 	<button
-		on:click={() => {
+		onclick={() => {
 			const { nodes, edges, viewport } = toObject();
 			console.log(nodes, edges, viewport);
 		}}>toObject</button
 	>
 
 	<div class="label">Nodes:</div>
-	{#each $nodes as node (node.id)}
+	{#each nodes.current as node (node.id)}
 		<div>id: {node.id} | x: {node.position.x.toFixed(1)} y: {node.position.y.toFixed(1)}</div>
 	{/each}
 
 	<div class="label">Viewport:</div>
 	<div>
-		x: {$viewport.x.toFixed(1)} y: {$viewport.y.toFixed(1)} zoom: {$viewport.zoom.toFixed(1)}
+		x: {viewport.current.x.toFixed(1)} y: {viewport.current.y.toFixed(1)} zoom: {viewport.current.zoom.toFixed(
+			1
+		)}
 	</div>
 </aside>
 

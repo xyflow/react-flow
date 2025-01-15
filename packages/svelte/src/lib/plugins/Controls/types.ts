@@ -1,3 +1,4 @@
+import type { Snippet } from 'svelte';
 import type { HTMLButtonAttributes } from 'svelte/elements';
 import type { PanelPosition } from '@xyflow/system';
 
@@ -19,10 +20,14 @@ export type ControlsProps = {
   buttonBgColorHover?: string;
   buttonColor?: string;
   buttonColorHover?: string;
+  buttonBorderColor?: string;
   'aria-label'?: string;
   style?: string;
   class?: string;
   orientation?: 'horizontal' | 'vertical';
+  children?: Snippet;
+  before?: Snippet;
+  after?: Snippet;
   fitViewOptions?: FitViewOptions;
 };
 
@@ -33,4 +38,5 @@ export type ControlButtonProps = HTMLButtonAttributes & {
   color?: string;
   colorHover?: string;
   borderColor?: string;
+  children?: Snippet;
 };

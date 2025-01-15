@@ -1,9 +1,17 @@
 <script lang="ts">
-  export let x: number | null = 0;
-  export let y: number | null = 0;
-  export let width: number | string | null = 0;
-  export let height: number | string | null = 0;
-  export let isVisible: boolean = true;
+  let {
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    isVisible = true
+  }: {
+    x?: number | null;
+    y?: number | null;
+    width?: number | string | null;
+    height?: number | string | null;
+    isVisible?: boolean;
+  } = $props();
 </script>
 
 {#if isVisible}
@@ -12,7 +20,7 @@
     style:width={typeof width === 'string' ? width : `${width}px`}
     style:height={typeof height === 'string' ? height : `${height}px`}
     style:transform={`translate(${x}px, ${y}px)`}
-  />
+  ></div>
 {/if}
 
 <style>

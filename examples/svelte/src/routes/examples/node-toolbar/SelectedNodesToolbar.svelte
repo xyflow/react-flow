@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { NodeToolbar, useNodes } from '@xyflow/svelte';
 
-	const nodes = useNodes();
+	let nodes = useNodes();
 
-	$: selectedNodeIds = $nodes.filter((node) => node.selected).map((node) => node.id);
-	$: isVisible = selectedNodeIds.length > 1;
+	let selectedNodeIds = $derived(
+		nodes.current.filter((node) => node.selected).map((node) => node.id)
+	);
+	let isVisible = $derived(selectedNodeIds.length > 1);
 </script>
 
 <NodeToolbar nodeId={selectedNodeIds} {isVisible}>

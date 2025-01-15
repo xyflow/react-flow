@@ -1,9 +1,7 @@
 <script lang="ts">
   import cc from 'classcat';
 
-  export let radius = 5;
-  let className: string = '';
-  export { className as class };
+  let { radius, class: className }: { radius: number; class?: string } = $props();
 </script>
 
 <circle

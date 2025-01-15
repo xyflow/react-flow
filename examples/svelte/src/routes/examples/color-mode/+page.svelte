@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -18,7 +17,7 @@
 		targetPosition: Position.Left
 	};
 
-	const nodes = writable([
+	let nodes = $state.raw([
 		{
 			id: 'A',
 			position: { x: 0, y: 150 },
@@ -30,24 +29,24 @@
 		{ id: 'D', position: { x: 250, y: 300 }, data: { label: 'D' }, ...nodeDefaults }
 	]);
 
-	const edges = writable([
+	let edges = $state.raw([
 		{ id: 'A-B', source: 'A', target: 'B' },
 		{ id: 'A-C', source: 'A', target: 'C' },
 		{ id: 'A-D', source: 'A', target: 'D' }
 	]);
 
-	let colorMode: ColorMode = 'light';
+	let colorMode: ColorMode = $state('system');
 </script>
 
-<SvelteFlow {nodes} {edges} {colorMode} fitView>
+<SvelteFlow bind:nodes bind:edges {colorMode} colorModeSSR={'dark'} fitView>
 	<Controls />
 	<Background variant={BackgroundVariant.Dots} />
 	<MiniMap />
 
 	<Panel>
 		<select bind:value={colorMode} data-testid="colormode-select">
-			<option value="light">light</option>
 			<option value="dark">dark</option>
+			<option value="light">light</option>
 			<option value="system">system</option>
 		</select>
 	</Panel>

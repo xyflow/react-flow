@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
+		useNodeConnections,
 		useSvelteFlow,
 		type Edge,
 		type Node,
@@ -19,15 +19,19 @@
 		}
 	];
 
-	const nodes = writable<Node[]>(initialNodes);
-	const edges = writable<Edge[]>([]);
+	let nodes = $state.raw<Node[]>(initialNodes);
+	let edges = $state.raw<Edge[]>([]);
 
-	let connectingNodeId: string | null = '0';
-	let rect: DOMRectReadOnly;
+	let connectingNodeId: string | null = $state('0');
+	let rect = $state<DOMRectReadOnly>();
 	let id = 1;
 	const getId = () => `${id++}`;
 
-	const { screenToFlowPosition, flowToScreenPosition } = useSvelteFlow();
+	const { screenToFlowPosition, flowToScreenPosition } = $derived(useSvelteFlow());
+
+	const connections = useNodeConnections({ id: '0', handleType: 'source' });
+
+	$inspect(connections.current);
 
 	const handleConnectEnd: OnConnectEnd = (event) => {
 		if (!connectingNodeId) return;
@@ -56,15 +60,14 @@
 				origin: [0.5, 0.0]
 			};
 
-			$nodes.push(newNode);
-			$edges.push({
+			nodes = [...nodes, newNode];
+
+			const newEdge = {
 				source: connectingNodeId,
 				target: id,
 				id: `${connectingNodeId}--${id}`
-			});
-
-			$nodes = $nodes;
-			$edges = $edges;
+			};
+			edges = [...edges, newEdge];
 		}
 	};
 </script>
@@ -73,8 +76,8 @@
 
 <div class="wrapper" bind:contentRect={rect}>
 	<SvelteFlow
-		{nodes}
-		{edges}
+		bind:nodes
+		bind:edges
 		fitView
 		fitViewOptions={{ padding: 2 }}
 		onconnectstart={(_, { nodeId }) => {

@@ -1,38 +1,38 @@
 <script lang="ts">
   import { getSmoothStepPath } from '@xyflow/system';
 
+  import BaseEdge from './BaseEdge.svelte';
   import type { SmoothStepEdgeProps } from '$lib/types';
-  import { BaseEdge } from '$lib/components/BaseEdge';
 
-  type $$Props = SmoothStepEdgeProps;
-
-  export let id: $$Props['id'] = undefined;
-  export let label: $$Props['label'] = undefined;
-  export let labelStyle: $$Props['labelStyle'] = undefined;
-  export let style: $$Props['style'] = undefined;
-  export let markerStart: $$Props['markerStart'] = undefined;
-  export let markerEnd: $$Props['markerEnd'] = undefined;
-  export let pathOptions: $$Props['pathOptions'] = undefined;
-  export let interactionWidth: $$Props['interactionWidth'] = undefined;
-
-  export let sourceX: $$Props['sourceX'];
-  export let sourceY: $$Props['sourceY'];
-  export let sourcePosition: $$Props['sourcePosition'];
-
-  export let targetX: $$Props['targetX'];
-  export let targetY: $$Props['targetY'];
-  export let targetPosition: $$Props['targetPosition'];
-
-  $: [path, labelX, labelY] = getSmoothStepPath({
+  let {
+    id,
+    interactionWidth,
+    label,
+    labelStyle,
+    style,
+    markerEnd,
+    markerStart,
+    pathOptions,
+    sourcePosition,
     sourceX,
     sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
     targetPosition,
-    borderRadius: pathOptions?.borderRadius,
-    offset: pathOptions?.offset
-  });
+    targetX,
+    targetY
+  }: SmoothStepEdgeProps = $props();
+
+  let [path, labelX, labelY] = $derived(
+    getSmoothStepPath({
+      sourceX,
+      sourceY,
+      targetX,
+      targetY,
+      sourcePosition,
+      targetPosition,
+      borderRadius: pathOptions?.borderRadius,
+      offset: pathOptions?.offset
+    })
+  );
 </script>
 
 <BaseEdge

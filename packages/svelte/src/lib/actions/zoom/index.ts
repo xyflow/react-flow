@@ -1,4 +1,3 @@
-import type { Writable } from 'svelte/store';
 import {
   PanOnScrollMode,
   XYPanZoom,
@@ -10,17 +9,16 @@ import {
 } from '@xyflow/system';
 
 type ZoomParams = {
-  viewport: Writable<Viewport>;
+  viewport: Viewport;
   initialViewport: Viewport;
   minZoom: number;
   maxZoom: number;
-  dragging: Writable<boolean>;
+  setPanZoomInstance: (panZoomInstance: PanZoomInstance) => void;
   onPanZoomStart?: OnPanZoom;
   onPanZoom?: OnPanZoom;
   onPanZoomEnd?: OnPanZoom;
   onPaneContextMenu?: (event: MouseEvent) => void;
   translateExtent: CoordinateExtent;
-  panZoom: Writable<PanZoomInstance | null>;
   zoomOnScroll: boolean;
   zoomOnPinch: boolean;
   zoomOnDoubleClick: boolean;
@@ -38,18 +36,19 @@ type ZoomParams = {
   lib: string;
   paneClickDistance: number;
   onTransformChange: (transform: Transform) => void;
+  onDraggingChange: (dragging: boolean) => void;
 };
 
 export default function zoom(domNode: Element, params: ZoomParams) {
   const {
-    panZoom,
     minZoom,
     maxZoom,
     initialViewport,
-    viewport,
-    dragging,
     translateExtent,
-    paneClickDistance
+    paneClickDistance,
+    setPanZoomInstance,
+    onDraggingChange,
+    onTransformChange
   } = params;
 
   const panZoomInstance = XYPanZoom({
@@ -59,11 +58,20 @@ export default function zoom(domNode: Element, params: ZoomParams) {
     translateExtent,
     viewport: initialViewport,
     paneClickDistance,
-    onDraggingChange: dragging.set
+    onDraggingChange
   });
-  const currentViewport = panZoomInstance.getViewport();
-  viewport.set(currentViewport);
-  panZoom.set(panZoomInstance);
+
+  //TODO: is this neccessary?
+  const viewport = panZoomInstance.getViewport();
+  if (
+    initialViewport.x !== viewport.x ||
+    initialViewport.y !== viewport.y ||
+    initialViewport.zoom !== viewport.zoom
+  ) {
+    onTransformChange([viewport.x, viewport.y, viewport.zoom]);
+  }
+
+  setPanZoomInstance(panZoomInstance);
 
   panZoomInstance.update(params);
 

@@ -1,10 +1,14 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
+
   import portal from '$lib/actions/portal';
   import { useStore } from '$lib/store';
 
-  const { domNode } = useStore();
+  let { children }: { children?: Snippet } = $props();
+
+  const store = useStore();
 </script>
 
-<div use:portal={{ target: '.svelte-flow__viewport-portal', domNode: $domNode }}>
-  <slot />
+<div use:portal={{ target: '.svelte-flow__viewport-portal', domNode: store.domNode }}>
+  {@render children?.()}
 </div>

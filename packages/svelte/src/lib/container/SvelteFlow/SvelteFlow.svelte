@@ -1,218 +1,141 @@
 <script lang="ts">
-  import { onMount, hasContext } from 'svelte';
-  import { get } from 'svelte/store';
+  import { getContext, setContext, onDestroy } from 'svelte';
   import cc from 'classcat';
-  import { ConnectionMode, PanOnScrollMode } from '@xyflow/system';
+  import { PanOnScrollMode } from '@xyflow/system';
 
+  import { key, createStore } from '$lib/store';
   import { Zoom } from '$lib/container/Zoom';
   import { Pane } from '$lib/container/Pane';
   import { Viewport as ViewportComponent } from '$lib/container/Viewport';
   import { NodeRenderer } from '$lib/container/NodeRenderer';
   import { EdgeRenderer } from '$lib/container/EdgeRenderer';
-  import { UserSelection } from '$lib/components/UserSelection';
   import { NodeSelection } from '$lib/components/NodeSelection';
+  import { Selection } from '$lib/components/Selection';
   import { KeyHandler } from '$lib/components/KeyHandler';
   import { ConnectionLine } from '$lib/components/ConnectionLine';
   import { Attribution } from '$lib/components/Attribution';
-  import { key, useStore, createStoreContext } from '$lib/store';
   import type { SvelteFlowProps } from './types';
-  import { updateStore, updateStoreByKeys, type UpdatableStoreProps } from './utils';
-  import { useColorModeClass } from '$lib/hooks/useColorModeClass';
+  import { type ProviderContext, type StoreContext } from '$lib/store/types';
 
-  type $$Props = SvelteFlowProps;
+  let {
+    style,
+    class: className,
+    width,
+    height,
+    proOptions,
+    selectionKey,
+    deleteKey,
+    panActivationKey,
+    multiSelectionKey,
+    zoomActivationKey,
+    paneClickDistance = 1,
+    nodeClickDistance = 1,
+    onMoveStart,
+    onMoveEnd,
+    onMove,
+    connectionLine,
+    onnodeclick,
+    onnodecontextmenu,
+    onnodedrag,
+    onnodedragstart,
+    onnodedragstop,
+    onnodemouseenter,
+    onnodemousemove,
+    onnodemouseleave,
+    onselectionclick,
+    onselectioncontextmenu,
+    onedgeclick,
+    onedgecontextmenu,
+    onedgemouseenter,
+    onedgemouseleave,
+    onpaneclick,
+    onpanecontextmenu,
+    panOnScrollMode = PanOnScrollMode.Free,
+    preventScrolling = true,
+    zoomOnScroll = true,
+    zoomOnDoubleClick = true,
+    zoomOnPinch = true,
+    panOnScroll = false,
+    panOnDrag = true,
+    selectionOnDrag = true,
+    connectionLineContainerStyle = '',
+    connectionLineStyle = '',
+    attributionPosition,
+    children,
+    nodes = $bindable([]),
+    edges = $bindable([]),
+    viewport = $bindable(undefined),
+    ...props
+  }: SvelteFlowProps = $props();
 
-  export let id: $$Props['id'] = '1';
-  export let nodes: $$Props['nodes'];
-  export let edges: $$Props['edges'];
-  export let fitView: $$Props['fitView'] = undefined;
-  export let fitViewOptions: $$Props['fitViewOptions'] = undefined;
-  export let minZoom: $$Props['minZoom'] = undefined;
-  export let maxZoom: $$Props['maxZoom'] = undefined;
-  export let initialViewport: $$Props['initialViewport'] = undefined;
-  export let viewport: $$Props['viewport'] = undefined;
-  export let nodeTypes: $$Props['nodeTypes'] = undefined;
-  export let edgeTypes: $$Props['edgeTypes'] = undefined;
-  export let selectionKey: $$Props['selectionKey'] = undefined;
-  export let selectionMode: $$Props['selectionMode'] = undefined;
-  export let panActivationKey: $$Props['panActivationKey'] = undefined;
-  export let multiSelectionKey: $$Props['multiSelectionKey'] = undefined;
-  export let zoomActivationKey: $$Props['zoomActivationKey'] = undefined;
-  export let nodesDraggable: $$Props['nodesDraggable'] = undefined;
-  export let nodesConnectable: $$Props['nodesConnectable'] = undefined;
-  export let nodeDragThreshold: $$Props['nodeDragThreshold'] = undefined;
-  export let elementsSelectable: $$Props['elementsSelectable'] = undefined;
-  export let snapGrid: $$Props['snapGrid'] = undefined;
-  export let deleteKey: $$Props['deleteKey'] = undefined;
-  export let connectionRadius: $$Props['connectionRadius'] = undefined;
-  export let connectionLineType: $$Props['connectionLineType'] = undefined;
-  export let connectionMode: $$Props['connectionMode'] = ConnectionMode.Strict;
-  export let connectionLineStyle: $$Props['connectionLineStyle'] = '';
-  export let connectionLineContainerStyle: $$Props['connectionLineContainerStyle'] = '';
-  export let onMoveStart: $$Props['onMoveStart'] = undefined;
-  export let onMove: $$Props['onMove'] = undefined;
-  export let onMoveEnd: $$Props['onMoveEnd'] = undefined;
-  export let isValidConnection: $$Props['isValidConnection'] = undefined;
-  export let translateExtent: $$Props['translateExtent'] = undefined;
-  export let nodeExtent: $$Props['nodeExtent'] = undefined;
-  export let onlyRenderVisibleElements: $$Props['onlyRenderVisibleElements'] = undefined;
-  export let panOnScrollMode: $$Props['panOnScrollMode'] = PanOnScrollMode.Free;
-  export let preventScrolling: $$Props['preventScrolling'] = true;
-  export let zoomOnScroll: $$Props['zoomOnScroll'] = true;
-  export let zoomOnDoubleClick: $$Props['zoomOnDoubleClick'] = true;
-  export let zoomOnPinch: $$Props['zoomOnPinch'] = true;
-  export let panOnScroll: $$Props['panOnScroll'] = false;
-  export let panOnDrag: $$Props['panOnDrag'] = true;
-  export let selectionOnDrag: $$Props['selectionOnDrag'] = undefined;
-  export let autoPanOnConnect: $$Props['autoPanOnConnect'] = true;
-  export let autoPanOnNodeDrag: $$Props['autoPanOnNodeDrag'] = true;
-  export let onerror: $$Props['onerror'] = undefined;
-  export let ondelete: $$Props['ondelete'] = undefined;
-  export let onedgecreate: $$Props['onedgecreate'] = undefined;
-  export let attributionPosition: $$Props['attributionPosition'] = undefined;
-  export let proOptions: $$Props['proOptions'] = undefined;
-  export let defaultEdgeOptions: $$Props['defaultEdgeOptions'] = undefined;
-  export let width: $$Props['width'] = undefined;
-  export let height: $$Props['height'] = undefined;
-  export let colorMode: $$Props['colorMode'] = 'light';
-  export let onconnect: $$Props['onconnect'] = undefined;
-  export let onconnectstart: $$Props['onconnectstart'] = undefined;
-  export let onconnectend: $$Props['onconnectend'] = undefined;
-  export let onbeforedelete: $$Props['onbeforedelete'] = undefined;
-  export let oninit: $$Props['oninit'] = undefined;
-  export let nodeOrigin: $$Props['nodeOrigin'] = undefined;
-  export let paneClickDistance: $$Props['paneClickDistance'] = 0;
-  export let nodeClickDistance: $$Props['nodeClickDistance'] = 0;
+  let domNode = $state<HTMLDivElement>();
+  let clientWidth = $state<number | undefined>(width);
+  let clientHeight = $state<number | undefined>(height);
 
-  export let defaultMarkerColor = '#b1b1b7';
-
-  export let style: $$Props['style'] = undefined;
-  let className: $$Props['class'] = undefined;
-  export { className as class };
-
-  let domNode: HTMLDivElement;
-  let clientWidth: number;
-  let clientHeight: number;
-
-  const initViewport = $viewport || initialViewport;
-
-  const store = hasContext(key)
-    ? useStore()
-    : createStoreContext({
-        nodes: get(nodes),
-        edges: get(edges),
-        width,
-        height,
-        fitView,
-        nodeOrigin,
-        nodeExtent
-      });
-
-  onMount(() => {
-    store.width.set(clientWidth);
-    store.height.set(clientHeight);
-    store.domNode.set(domNode);
-
-    store.syncNodeStores(nodes);
-    store.syncEdgeStores(edges);
-    store.syncViewport(viewport);
-
-    if (fitView !== undefined) {
-      store.fitViewOnInit.set(fitView);
+  const store = createStore({
+    props,
+    get domNode() {
+      return domNode;
+    },
+    get width() {
+      return clientWidth;
+    },
+    get height() {
+      return clientHeight;
+    },
+    get nodes() {
+      return nodes;
+    },
+    set nodes(newNodes) {
+      nodes = newNodes;
+    },
+    get edges() {
+      return edges;
+    },
+    set edges(newEdges) {
+      edges = newEdges;
+    },
+    get viewport() {
+      return viewport;
+    },
+    set viewport(newViewport) {
+      viewport = newViewport;
     }
-
-    if (fitViewOptions) {
-      store.fitViewOptions.set(fitViewOptions);
-    }
-
-    updateStore(store, {
-      nodeTypes,
-      edgeTypes,
-      minZoom,
-      maxZoom,
-      translateExtent,
-      paneClickDistance
-    });
-
-    return () => {
-      store.reset();
-    };
   });
 
-  // Update width & height on resize
-  $: {
-    if (clientWidth !== undefined && clientHeight !== undefined) {
-      store.width.set(clientWidth);
-      store.height.set(clientHeight);
+  // Set store for provider context
+  const providerContext = getContext<ProviderContext>(key);
+  if (providerContext && providerContext.setStore) {
+    providerContext.setStore(store);
+  }
+
+  // Overwrite store context to give children direct access
+  setContext(key, {
+    provider: false,
+    getStore() {
+      return store;
     }
-  }
+  } satisfies StoreContext);
 
-  // Call oninit once when flow is intialized
-  const { initialized } = store;
-  let onInitCalled = false;
-  $: {
-    if (!onInitCalled && $initialized) {
-      oninit?.();
-      onInitCalled = true;
-    }
-  }
-
-  // this updates the store for simple changes
-  // where the prop names equals the store name
-  $: {
-    const updatableProps: UpdatableStoreProps = {
-      flowId: id,
-      connectionLineType,
-      connectionRadius,
-      selectionMode,
-      snapGrid,
-      defaultMarkerColor,
-      nodesDraggable,
-      nodesConnectable,
-      elementsSelectable,
-      onlyRenderVisibleElements,
-      isValidConnection,
-      autoPanOnConnect,
-      autoPanOnNodeDrag,
-      onerror,
-      ondelete,
-      onedgecreate,
-      connectionMode,
-      nodeDragThreshold,
-      onconnect,
-      onconnectstart,
-      onconnectend,
-      onbeforedelete,
-      nodeOrigin
-    };
-
-    updateStoreByKeys(store, updatableProps);
-  }
-
-  $: updateStore(store, {
-    nodeTypes,
-    edgeTypes,
-    minZoom,
-    maxZoom,
-    translateExtent,
-    paneClickDistance
+  onDestroy(() => {
+    store.reset();
   });
-
-  $: colorModeClass = useColorModeClass(colorMode);
 </script>
 
 <div
   bind:this={domNode}
   bind:clientWidth
   bind:clientHeight
+  style:width
+  style:height
   {style}
-  class={cc(['svelte-flow', className, $colorModeClass])}
+  class={cc(['svelte-flow', className, store.colorMode])}
   data-testid="svelte-flow__wrapper"
-  on:dragover
-  on:drop
-  {...$$restProps}
   role="application"
+  {...props}
 >
   <KeyHandler
+    {store}
     {selectionKey}
     {deleteKey}
     {panActivationKey}
@@ -220,66 +143,68 @@
     {zoomActivationKey}
   />
   <Zoom
-    initialViewport={initViewport}
+    {store}
     {onMoveStart}
     {onMove}
     {onMoveEnd}
-    panOnScrollMode={panOnScrollMode === undefined ? PanOnScrollMode.Free : panOnScrollMode}
-    preventScrolling={preventScrolling === undefined ? true : preventScrolling}
-    zoomOnScroll={zoomOnScroll === undefined ? true : zoomOnScroll}
-    zoomOnDoubleClick={zoomOnDoubleClick === undefined ? true : zoomOnDoubleClick}
-    zoomOnPinch={zoomOnPinch === undefined ? true : zoomOnPinch}
-    panOnScroll={panOnScroll === undefined ? false : panOnScroll}
-    panOnDrag={panOnDrag === undefined ? true : panOnDrag}
-    paneClickDistance={paneClickDistance === undefined ? 0 : paneClickDistance}
+    {panOnScrollMode}
+    {preventScrolling}
+    {zoomOnScroll}
+    {zoomOnDoubleClick}
+    {zoomOnPinch}
+    {panOnScroll}
+    {panOnDrag}
+    {paneClickDistance}
   >
-    <Pane
-      on:paneclick
-      on:panecontextmenu
-      panOnDrag={panOnDrag === undefined ? true : panOnDrag}
-      {selectionOnDrag}
-    >
-      <ViewportComponent>
+    <Pane {store} {onpaneclick} {onpanecontextmenu} {panOnDrag} {selectionOnDrag}>
+      <ViewportComponent {store}>
         <EdgeRenderer
-          on:edgeclick
-          on:edgecontextmenu
-          on:edgemouseenter
-          on:edgemouseleave
-          {defaultEdgeOptions}
+          {store}
+          {onedgeclick}
+          {onedgecontextmenu}
+          {onedgemouseenter}
+          {onedgemouseleave}
         />
         <ConnectionLine
+          {store}
           containerStyle={connectionLineContainerStyle}
           style={connectionLineStyle}
-          isCustomComponent={$$slots.connectionLine}
-        >
-          <slot name="connectionLine" slot="connectionLine" />
-        </ConnectionLine>
-        <div class="svelte-flow__edgelabel-renderer" />
-        <div class="svelte-flow__viewport-portal" />
+          {connectionLine}
+        />
+        <div class="svelte-flow__edgelabel-renderer"></div>
+        <div class="svelte-flow__viewport-portal"></div>
         <NodeRenderer
+          {store}
           {nodeClickDistance}
-          on:nodeclick
-          on:nodemouseenter
-          on:nodemousemove
-          on:nodemouseleave
-          on:nodedragstart
-          on:nodedrag
-          on:nodedragstop
-          on:nodecontextmenu
+          {onnodeclick}
+          {onnodecontextmenu}
+          {onnodemouseenter}
+          {onnodemousemove}
+          {onnodemouseleave}
+          {onnodedrag}
+          {onnodedragstart}
+          {onnodedragstop}
         />
         <NodeSelection
-          on:selectionclick
-          on:selectioncontextmenu
-          on:nodedragstart
-          on:nodedrag
-          on:nodedragstop
+          {store}
+          {onselectionclick}
+          {onselectioncontextmenu}
+          {onnodedrag}
+          {onnodedragstart}
+          {onnodedragstop}
         />
       </ViewportComponent>
-      <UserSelection />
+      <Selection
+        isVisible={!!(store.selectionRect && store.selectionRectMode === 'user')}
+        width={store.selectionRect?.width}
+        height={store.selectionRect?.height}
+        x={store.selectionRect?.x}
+        y={store.selectionRect?.y}
+      />
     </Pane>
   </Zoom>
   <Attribution {proOptions} position={attributionPosition} />
-  <slot />
+  {@render children?.()}
 </div>
 
 <style>

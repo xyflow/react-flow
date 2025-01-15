@@ -1,4 +1,3 @@
-import { derived, type Readable } from 'svelte/store';
 import { shallowNodeData } from '@xyflow/system';
 
 import type { Node } from '$lib/types';
@@ -13,18 +12,20 @@ import { useStore } from '$lib/store';
  */
 export function useNodesData<NodeType extends Node = Node>(
   nodeId: string
-): Readable<Pick<NodeType, 'id' | 'data' | 'type'> | null>;
+): { current: Pick<NodeType, 'id' | 'data' | 'type'> | null };
 export function useNodesData<NodeType extends Node = Node>(
   nodeIds: string[]
-): Readable<Pick<NodeType, 'id' | 'data' | 'type'>[]>;
+): { current: Pick<NodeType, 'id' | 'data' | 'type'>[] };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useNodesData(nodeIds: any): any {
-  const { nodes, nodeLookup } = useStore();
+  const { nodes, nodeLookup } = $derived(useStore());
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let prevNodesData: any[] = [];
   let initialRun = true;
 
-  return derived([nodes, nodeLookup], ([, nodeLookup], set) => {
+  const nodeData = $derived.by(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    nodes;
     const nextNodesData = [];
     const isArrayOfIds = Array.isArray(nodeIds);
     const _nodeIds = isArrayOfIds ? nodeIds : [nodeIds];
@@ -42,8 +43,15 @@ export function useNodesData(nodeIds: any): any {
 
     if (!shallowNodeData(nextNodesData, prevNodesData) || initialRun) {
       prevNodesData = nextNodesData;
-      set(isArrayOfIds ? nextNodesData : nextNodesData[0] ?? null);
       initialRun = false;
     }
+
+    return isArrayOfIds ? prevNodesData : (prevNodesData[0] ?? null);
   });
+
+  return {
+    get current() {
+      return nodeData;
+    }
+  };
 }

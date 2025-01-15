@@ -3,6 +3,8 @@ import DragHandleNode from './components/DragHandleNode';
 export default {
   flowProps: {
     fitView: true,
+    deleteKeyCode: 'd',
+    multiSelectionKeyCode: 's',
     nodeTypes: {
       DragHandleNode,
     },

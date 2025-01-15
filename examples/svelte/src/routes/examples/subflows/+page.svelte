@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import {
 		SvelteFlow,
 		Controls,
@@ -7,7 +6,8 @@
 		BackgroundVariant,
 		MiniMap,
 		type NodeTypes,
-		type Node
+		type Node,
+		type Edge
 	} from '@xyflow/svelte';
 
 	import '@xyflow/svelte/dist/style.css';
@@ -18,7 +18,7 @@
 		default: DebugNode
 	};
 
-	const nodes = writable<Node[]>([
+	let nodes = $state.raw<Node[]>([
 		{
 			id: '1',
 			type: 'input',
@@ -95,7 +95,7 @@
 		}
 	]);
 
-	const edges = writable([
+	let edges = $state.raw<Edge[]>([
 		{
 			id: 'e1-2',
 			source: '1',
@@ -115,13 +115,9 @@
 		{ id: 'e4a-4b2', source: '4a', target: '4b2', zIndex: 100 },
 		{ id: 'e4b1-4b2', source: '4b1', target: '4b2' }
 	]);
-
-	$: {
-		console.log($nodes);
-	}
 </script>
 
-<SvelteFlow {nodes} {edges} {nodeTypes} fitView minZoom={0.1} maxZoom={2.5}>
+<SvelteFlow bind:nodes bind:edges {nodeTypes} fitView minZoom={0.1} maxZoom={2.5}>
 	<Controls />
 	<Background variant={BackgroundVariant.Dots} />
 	<MiniMap />
