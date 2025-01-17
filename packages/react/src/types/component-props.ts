@@ -259,7 +259,7 @@ export interface ReactFlowProps<NodeType extends Node = Node, EdgeType extends E
   /** Styles to be applied to the connection line */
   connectionLineStyle?: CSSProperties;
   /** React Component to be used as a connection line */
-  connectionLineComponent?: ConnectionLineComponent;
+  connectionLineComponent?: ConnectionLineComponent<NodeType>;
   /** Styles to be applied to the container of the connection line */
   connectionLineContainerStyle?: CSSProperties;
   /** 'strict' connection mode will only allow you to connect source handles to target handles.
