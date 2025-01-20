@@ -202,7 +202,7 @@ export function NodeWrapper<NodeType extends Node>({
           type={nodeType}
           positionAbsoluteX={internals.positionAbsolute.x}
           positionAbsoluteY={internals.positionAbsolute.y}
-          selected={node.selected}
+          selected={node.selected ?? false}
           selectable={isSelectable}
           draggable={isDraggable}
           deletable={node.deletable ?? true}

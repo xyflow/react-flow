@@ -88,20 +88,9 @@ export type InternalNodeBase<NodeType extends NodeBase = NodeBase> = NodeType & 
  */
 export type NodeProps<NodeType extends NodeBase> = Pick<
   NodeType,
-  | 'id'
-  | 'data'
-  | 'width'
-  | 'height'
-  | 'sourcePosition'
-  | 'targetPosition'
-  | 'selected'
-  | 'dragHandle'
-  | 'selectable'
-  | 'deletable'
-  | 'draggable'
-  | 'parentId'
+  'id' | 'data' | 'width' | 'height' | 'sourcePosition' | 'targetPosition' | 'dragHandle' | 'parentId'
 > &
-  Required<Pick<NodeType, 'type' | 'dragging' | 'zIndex'>> & {
+  Required<Pick<NodeType, 'type' | 'dragging' | 'zIndex' | 'selectable' | 'deletable' | 'selected' | 'draggable'>> & {
     /** whether a node is connectable or not */
     isConnectable: boolean;
     /** position absolute x value */

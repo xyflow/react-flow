@@ -54,7 +54,9 @@
     nodeDragThreshold,
     selectNodesOnDrag,
     handleNodeSelection,
-    updateNodeInternals
+    updateNodeInternals,
+    elementsSelectable,
+    nodesDraggable
   } = store;
 
   let nodeRef: HTMLDivElement;
@@ -194,14 +196,14 @@
       this={nodeComponent}
       {data}
       {id}
-      {selected}
-      {selectable}
-      {deletable}
+      selected={selected ?? false}
+      selectable={selectable ?? $elementsSelectable ?? true}
+      deletable={deletable ?? true}
       {sourcePosition}
       {targetPosition}
       {zIndex}
       {dragging}
-      {draggable}
+      draggable={draggable ?? $nodesDraggable ?? true}
       {dragHandle}
       {parentId}
       type={nodeType}
